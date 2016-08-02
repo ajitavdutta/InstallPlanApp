@@ -3,6 +3,7 @@ package com.app.controller;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.util.ResourceBundle;
@@ -69,7 +70,6 @@ public class MainScreenController implements Initializable {
 
 	private Connection dbConnection;
 
-	FXMLLoader loader;
 	InstallConfigController ICController;
 	InstallActivityController preInstallController;
 	InstallActivityController postInstallController;
@@ -79,6 +79,7 @@ public class MainScreenController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		this.dbConnection = AppDao.getDBConnection();
 		devSys = AppUtility.getProperty("DEV-SYS");
+		FXMLLoader loader = new FXMLLoader();
 
 		plan = new InstallPlan();
 		/*
@@ -123,29 +124,34 @@ public class MainScreenController implements Initializable {
 			}
 		});
 
+		AnchorPane pane;
+
 		// Install Config Screen
-		AnchorPane pane = (AnchorPane) loadScreen("InstallConfig.fxml");
-		tabConfig.setContent(pane);
-		ICController = loader.getController();
-		ICController.setPlan(plan);
-		ICController.setDbConnection(dbConnection);
-		ICController.setPrimaryStage(primaryStage);
-
-		// Pre-Install Screen
-		pane = (AnchorPane) loadScreen("InstallActivity.fxml");
-		tabPreInstall.setContent(pane);
-		preInstallController = loader.getController();
-		preInstallController.setPlan(plan);
-		}
-
-	public Node loadScreen(String url) {
 		try {
-			loader = new FXMLLoader(getClass().getResource(url));
-			return loader.load();
-		} catch (Exception e) {
+			loader.setLocation(getClass().getResource("InstallConfig.fxml"));
+			pane = (AnchorPane) loader.load();
+			tabConfig.setContent(pane);
+			ICController = loader.getController();
+			ICController.setPlan(plan);
+			ICController.setDbConnection(dbConnection);
+			ICController.setPrimaryStage(primaryStage);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
 		}
+
+		/*// Pre-Install Screen
+		try {
+			loader.setLocation(getClass().getResource("view/InstallActivity.fxml"));
+			pane = (AnchorPane) loader.load();
+			tabPreInstall.setContent(pane);
+			preInstallController = loader.getController();
+			preInstallController.setPlan(plan);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+
 	}
 
 	public InstallPlan getInstallPlan() {

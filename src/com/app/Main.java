@@ -20,7 +20,8 @@ public class Main extends Application {
 			Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
 			// Step 1 - Load the AnchorPane (Main Screen)
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("screens/MainScreen.fxml"));
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("view/MainScreen.fxml"));
 			AnchorPane root = (AnchorPane) loader.load();
 			MainScreenController controller = loader.getController();
 
