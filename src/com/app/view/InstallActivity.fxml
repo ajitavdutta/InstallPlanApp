@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="aPaneMain" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.screens.InstallActivityController">
+   <children>
+      <BorderPane layoutX="308.0" layoutY="160.0" prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <left>
+            <TreeView fx:id="treeTask" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+         </left>
+         <center>
+            <GridPane hgap="5.0" vgap="5.0" BorderPane.alignment="CENTER">
+              <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <AnchorPane>
+                     <children>
+                        <TitledPane animated="false" collapsible="false" prefHeight="418.0" prefWidth="800.0" text="Task Detail" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="392.0" prefWidth="798.0">
+                                 <children>
+                                    <VBox layoutX="173.0" layoutY="14.0" prefHeight="267.0" prefWidth="788.0" spacing="10.0" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                             <children>
+                                                <Label text=" Step No.">
+                                                   <HBox.margin>
+                                                      <Insets left="50.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField alignment="CENTER" prefWidth="100.0" promptText="Step No." />
+                                                <Label text="Step Owner">
+                                                   <HBox.margin>
+                                                      <Insets left="90.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <ComboBox promptText="-- Select User --">
+                                                   <HBox.margin>
+                                                      <Insets left="25.0" />
+                                                   </HBox.margin>
+                                                </ComboBox>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets top="5.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                             <children>
+                                                <Label text="Time to complete">
+                                                   <HBox.margin>
+                                                      <Insets left="5.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField alignment="CENTER" prefWidth="100.0" promptText="Minutes" />
+                                                <Label text="(Mins.)" />
+                                                <Label text="Execution Date">
+                                                   <HBox.margin>
+                                                      <Insets left="45.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <DatePicker prefHeight="25.0" prefWidth="128.0" promptText="DD-MM-YYYY">
+                                                   <HBox.margin>
+                                                      <Insets left="7.0" />
+                                                   </HBox.margin>
+                                                </DatePicker>
+                                                <Label text="Time" />
+                                                <TextField alignment="CENTER" prefWidth="35.0" promptText="HH" />
+                                                <Label text=":" />
+                                                <TextField alignment="CENTER" prefWidth="35.0" promptText="MM" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                             <children>
+                                                <Label text="Heading">
+                                                   <padding>
+                                                      <Insets left="5.0" />
+                                                   </padding>
+                                                   <HBox.margin>
+                                                      <Insets left="47.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField promptText="Step Description" HBox.hgrow="ALWAYS">
+                                                   <HBox.margin>
+                                                      <Insets right="5.0" />
+                                                   </HBox.margin>
+                                                </TextField>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TitledPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
+                     <children>
+                        <TitledPane animated="false" collapsible="false" prefHeight="300.0" prefWidth="800.0" text="Sub-Task Detail" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                           </content>
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TitledPane>
+                     </children>
+                  </AnchorPane>
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </BorderPane.margin>
+            </GridPane>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>
