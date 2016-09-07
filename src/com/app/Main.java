@@ -1,6 +1,6 @@
 package com.app;
 
-import com.app.controller.MainScreenController;
+import com.app.view.MainScreenController;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +21,7 @@ public class Main extends Application {
 
 			// Step 1 - Load the AnchorPane (Main Screen)
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(getClass().getResource("view/MainScreen.fxml"));
+			loader.setLocation(Main.class.getResource("view/MainScreen.fxml"));
 			AnchorPane root = (AnchorPane) loader.load();
 			MainScreenController controller = loader.getController();
 

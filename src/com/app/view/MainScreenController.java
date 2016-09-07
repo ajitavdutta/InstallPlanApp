@@ -1,4 +1,4 @@
-package com.app.controller;
+package com.app.view;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,6 +14,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.app.Main;
 import com.app.dao.AppDao;
 import com.app.models.InstallPlan;
 import com.app.models.ObjectList;
@@ -30,7 +31,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Tab;
@@ -142,7 +142,7 @@ public class MainScreenController implements Initializable {
 
 		/*// Pre-Install Screen
 		try {
-			loader.setLocation(getClass().getResource("view/InstallActivity.fxml"));
+			loader.setLocation(getClass().getResource("InstallActivity.fxml"));
 			pane = (AnchorPane) loader.load();
 			tabPreInstall.setContent(pane);
 			preInstallController = loader.getController();

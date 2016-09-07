@@ -1,4 +1,4 @@
-package com.app.controller;
+package com.app.view;
 
 import java.net.URL;
 import java.sql.Connection;
