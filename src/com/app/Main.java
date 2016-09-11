@@ -1,5 +1,6 @@
 package com.app;
 
+import com.app.view.AppScreenController;
 import com.app.view.MainScreenController;
 
 import javafx.application.Application;
@@ -21,9 +22,11 @@ public class Main extends Application {
 
 			// Step 1 - Load the AnchorPane (Main Screen)
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(Main.class.getResource("view/MainScreen.fxml"));
+			//loader.setLocation(Main.class.getResource("view/MainScreen.fxml"));
+			loader.setLocation(Main.class.getResource("view/AppScreen.fxml"));
 			AnchorPane root = (AnchorPane) loader.load();
-			MainScreenController controller = loader.getController();
+			//MainScreenController controller = loader.getController();
+			AppScreenController controller = loader.getController();
 
 			// Step 2 - Setup the scene and add default style CSS
 			Scene scene = new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight() - 50);
@@ -36,10 +39,12 @@ public class Main extends Application {
 			primaryStage.getIcons().add(new Image("file:resources/images/MainAppIcon.png"));
 			//primaryStage.setResizable(false);
 			primaryStage.setScene(scene);
-			primaryStage.setMaximized(true);
+			primaryStage.setMinWidth(1000.0);
+	        primaryStage.setMinHeight(600.0);
+			//primaryStage.setMaximized(true);
 			primaryStage.show();
 		
-			controller.setPrimaryStage(primaryStage);
+			//controller.setPrimaryStage(primaryStage);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
