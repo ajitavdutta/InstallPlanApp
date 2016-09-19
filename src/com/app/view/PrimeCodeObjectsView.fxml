@@ -63,7 +63,7 @@
                               </HBox>
                               <HBox spacing="10.0">
                                  <children>
-                                    <TableView fx:id="tblPrimeCodeList" prefHeight="200.0" prefWidth="555.0">
+                                    <TableView fx:id="tblPrimeCodeList" prefHeight="200.0" prefWidth="555.0" tableMenuButtonVisible="true">
                                        <columns>
                                           <TableColumn fx:id="colName" prefWidth="172.0" text="Name" />
                                           <TableColumn fx:id="colLocation" prefWidth="218.0" text="Location" />
@@ -78,12 +78,12 @@
                                                 <Insets left="5.0" right="5.0" />
                                              </VBox.margin>
                                           </Button>
-                                          <Button fx:id="btnEdit" mnemonicParsing="false" prefHeight="25.0" prefWidth="102.0" text="Edit...">
+                                          <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#editObject" prefHeight="25.0" prefWidth="102.0" text="Edit...">
                                              <VBox.margin>
                                                 <Insets left="5.0" right="5.0" />
                                              </VBox.margin>
                                           </Button>
-                                          <Button fx:id="btnRemove" mnemonicParsing="false" prefHeight="25.0" prefWidth="102.0" text="Remove">
+                                          <Button fx:id="btnRemove" mnemonicParsing="false" onAction="#deleteObject" prefHeight="25.0" prefWidth="102.0" text="Remove">
                                              <VBox.margin>
                                                 <Insets left="5.0" right="5.0" />
                                              </VBox.margin>
