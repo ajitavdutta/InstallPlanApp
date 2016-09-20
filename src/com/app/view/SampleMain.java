@@ -21,7 +21,7 @@ public class SampleMain extends Application {
 		controller.loadData();*/
 		Scene scene = new Scene(root);
 		scene.getStylesheets().add(Main.class.getResource("application.css").toExternalForm());
-		primaryStage.setTitle("Switching Team Install Plan App");
+		primaryStage.setTitle("Object Viewer");
 		primaryStage.getIcons().add(new Image("file:resources/images/MainAppIcon.png"));
 		primaryStage.setScene(scene);
 		primaryStage.setMinWidth(750);
