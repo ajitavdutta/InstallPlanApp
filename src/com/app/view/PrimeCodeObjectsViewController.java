@@ -14,6 +14,7 @@ import com.app.test.model.PrimeCodeObjectModel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -117,9 +118,84 @@ public class PrimeCodeObjectsViewController implements Initializable {
 		colVersion.setCellValueFactory(cellData -> cellData.getValue().versionProperty().asObject());
 		colLive.setCellValueFactory(cellData -> cellData.getValue().liveProperty().asString());
 
-		tblPrimeCodeList.getSelectionModel().selectedItemProperty()
-				.addListener((observable, oldValue, newValue) -> showObjectDetail(newValue));
+		txtName.textProperty().addListener((observable, oldValue, newValue) -> {
+		    if ( selectedObject != null ){
+		    	updateButtonStatus();
+		    }
+		});
+		
+		txtLocation.textProperty().addListener((observable, oldValue, newValue) -> {
+		    if ( selectedObject != null ){
+		    	updateButtonStatus();
+		    }
+		});
+		
+		rbtnRel5.selectedProperty().addListener((observable, oldValue, newValue) -> {
+		    if ( selectedObject != null ){
+		    	updateButtonStatus();
+		    }
+		});
+		
+		rbtnRel6.selectedProperty().addListener((observable, oldValue, newValue) -> {
+		    if ( selectedObject != null ){
+		    	updateButtonStatus();
+		    }
+		});
+		
+		chkLive.selectedProperty().addListener((observable, oldValue, newValue) -> {
+		    if ( selectedObject != null ){
+		    	updateButtonStatus();
+		    }
+		});
+		
+		txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+			filterTable();
+		});
 
+		chkRel5.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				filterTable();
+				sortedObjects = new SortedList<>(filteredObjects);
+			}
+		});
+
+		chkRel6.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				filterTable();
+				sortedObjects = new SortedList<>(filteredObjects);
+			}
+		});
+
+		chkLiveObj.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				filterTable();
+				sortedObjects = new SortedList<>(filteredObjects);
+			}
+		});
+
+		tblPrimeCodeList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ObjectModel>() {
+
+			@Override
+			public void changed(ObservableValue<? extends ObjectModel> observable, ObjectModel oldValue,
+					ObjectModel newValue) {
+				if (tblPrimeCodeList.getSelectionModel().getSelectedItem() != null) {
+					if ( !btnUpdate.isDisabled()){
+						// TODO 
+						saveObjectUpdate(true);
+					}
+					
+					selectedObject = tblPrimeCodeList.getSelectionModel().getSelectedItem();
+					showObjectDetail(newValue);
+				}
+			}
+		});
+		
 		btnAdd.setDisable(true);
 		btnUpdate.setDisable(true);
 		txtName.setEditable(false);
@@ -133,184 +209,103 @@ public class PrimeCodeObjectsViewController implements Initializable {
 		rbtnRel6.setToggleGroup(rbBtnGrp);
 
 		loadData();
+		
+	}
+	
+	private void saveObjectUpdate(boolean reqConf){
+		if (reqConf){
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.initOwner(tblPrimeCodeList.getParent().getScene().getWindow());
+			alert.setTitle("Update Confirmation");
+			alert.setHeaderText( "The Object details have been modified.");
+			alert.setContentText("Do you want to save the changes made to the Object?");
+			
+			Optional<ButtonType>result = alert.showAndWait();
+			if ( result.get() == ButtonType.CANCEL){
+				btnAdd.setDisable(true);
+				btnUpdate.setDisable(true);
+				txtName.setEditable(false);
+				txtLocation.setEditable(false);
+				rbtnRel5.setDisable(true);
+				rbtnRel6.setDisable(true);
+				chkLive.setDisable(true);
+				return;
+			}
+		}
+		
+		selectedObject.setName(txtName.getText());
+		selectedObject.setLocation(txtLocation.getText());
+		selectedObject.setLive(chkLive.isSelected());
+		int version = 0;
+		if ( rbtnRel5.isSelected() ){
+			version = 5;
+		}else{
+			version = 6;
+		}
+		selectedObject.setVersion(version);
+		btnAdd.setDisable(true);
+		btnUpdate.setDisable(true);
+		txtName.setEditable(false);
+		txtLocation.setEditable(false);
+		rbtnRel5.setDisable(true);
+		rbtnRel6.setDisable(true);
+		chkLive.setDisable(true);
+	}
+	
+	private void filterTable(){
+		filteredObjects.setPredicate(obj -> {
 
-		txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-			filteredObjects.setPredicate(obj -> {
-				/*
-				 * Check if Release 5 & 6 objects are to be displayed or not
-				 */
-				if (!chkRel5.isSelected() && !chkRel6.isSelected()) {
-					// No objects has to be displayed in the table;
-					return false;
-				}
+			// Release 5
+			if (!chkRel5.isSelected() && obj.getVersion() == 5) {
+				return false;
+			}
 
-				if (newValue == null || newValue.isEmpty()) {
-					// There is no text to be searched.
-					// Do nothing so that it will display all the objects in the
-					// table.
+			// Release 6
+			if (!chkRel6.isSelected() && obj.getVersion() == 6) {
+				return false;
+			}
+
+			// Live Object
+			if (chkLiveObj.isSelected() && !obj.getLive()) {
+				return false;
+			}
+
+			// Filter text
+			if (txtFilter.getText().trim().length() > 0) {
+				String lowerCaseFilter = txtFilter.getText().trim().toLowerCase();
+				if ( obj.getName().toLowerCase().contains(lowerCaseFilter) ||
+					 obj.getLocation().toLowerCase().contains(lowerCaseFilter) ) {
+					// The object contains the specified text so display
+					// in the Table.
 				} else {
-					// Filter the data based on the text present in the textbox
-					String lowerCaseFilter = newValue.toLowerCase();
-					if (obj.getName().toLowerCase().contains(lowerCaseFilter)
-							|| obj.getLocation().toLowerCase().contains(lowerCaseFilter)) {
-						// The object contains the specified text so display in
-						// the Table.
-					} else {
-						return false;
-					}
-				}
-
-				// If we reach here that object name/location contains the filter text.
-				// Check if it satisfy the other filters.
-
-				// Live Object
-				if (chkLiveObj.isSelected() && !obj.getLive()) {
 					return false;
 				}
-
-				// Release 5 Object
-				if (!chkRel5.isSelected() && obj.getVersion() == 5) {
-					return false;
-				}
-
-				// Release 6 Object
-				if (!chkRel6.isSelected() && obj.getVersion() == 6) {
-					return false;
-				}
-
-				return true;
-			});
-		});
-
-		chkRel5.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				filteredObjects.setPredicate(obj -> {
-
-					// Release 5
-					if (!chkRel5.isSelected() && obj.getVersion() == 5) {
-						return false;
-					}
-
-					// Release 6
-					if (!chkRel6.isSelected() && obj.getVersion() == 6) {
-						return false;
-					}
-
-					// Live Object
-					if (chkLiveObj.isSelected() && !obj.getLive()) {
-						return false;
-					}
-
-					// Filter text
-					if (txtFilter.getText().trim().length() > 0) {
-						String lowerCaseFilter = txtFilter.getText().trim().toLowerCase();
-						if (obj.getName().toLowerCase().contains(lowerCaseFilter)
-								|| obj.getLocation().toLowerCase().contains(lowerCaseFilter)) {
-							// The object contains the specified text so display
-							// in the Table.
-						} else {
-							return false;
-						}
-					}
-					return true;
-				});
-
-				sortedObjects = new SortedList<>(filteredObjects);
 			}
+			return true;
 		});
-
-		chkRel6.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				filteredObjects.setPredicate(obj -> {
-
-					// Release 5
-					if (!chkRel5.isSelected() && obj.getVersion() == 5) {
-						return false;
-					}
-
-					// Release 6
-					if (!chkRel6.isSelected() && obj.getVersion() == 6) {
-						return false;
-					}
-
-					// Live Object
-					if (chkLiveObj.isSelected() && !obj.getLive()) {
-						return false;
-					}
-
-					// Filter text
-					if (txtFilter.getText().trim().length() > 0) {
-						String lowerCaseFilter = txtFilter.getText().trim().toLowerCase();
-						if (obj.getName().toLowerCase().contains(lowerCaseFilter)
-								|| obj.getLocation().toLowerCase().contains(lowerCaseFilter)) {
-							// The object contains the specified text so display
-							// in the Table.
-						} else {
-							return false;
-						}
-					}
-					return true;
-				});
-
-				sortedObjects = new SortedList<>(filteredObjects);
-			}
-		});
-
-		chkLiveObj.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				filteredObjects.setPredicate(obj -> {
-
-					// Release 5
-					if (!chkRel5.isSelected() && obj.getVersion() == 5) {
-						return false;
-					}
-
-					// Release 6
-					if (!chkRel6.isSelected() && obj.getVersion() == 6) {
-						return false;
-					}
-
-					// Live Object
-					if (chkLiveObj.isSelected() && !obj.getLive()) {
-						return false;
-					}
-
-					// Filter text
-					if (txtFilter.getText().trim().length() > 0) {
-						String lowerCaseFilter = txtFilter.getText().trim().toLowerCase();
-						if (obj.getName().toLowerCase().contains(lowerCaseFilter)
-								|| obj.getLocation().toLowerCase().contains(lowerCaseFilter)) {
-							// The object contains the specified text so display
-							// in the Table.
-						} else {
-							return false;
-						}
-					}
-					return true;
-				});
-
-				sortedObjects = new SortedList<>(filteredObjects);
-			}
-		});
-
-		tblPrimeCodeList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ObjectModel>() {
-
-			@Override
-			public void changed(ObservableValue<? extends ObjectModel> observable, ObjectModel oldValue,
-					ObjectModel newValue) {
-				if (tblPrimeCodeList.getSelectionModel().getSelectedItem() != null) {
-					selectedObject = tblPrimeCodeList.getSelectionModel().getSelectedItem();
-					// System.out.println(selectedObject.getName());
-				}
-
-			}
-		});
+	}
+	
+	private void updateButtonStatus(){
+		boolean disabled = true;
+    	if ( !selectedObject.getName().equalsIgnoreCase(txtName.getText()) ){
+	    	disabled = false;
+	    }
+    	
+    	if ( !txtLocation.getText().equalsIgnoreCase(selectedObject.getLocation())){
+    		disabled = false;
+    	}
+    	
+    	if ( (selectedObject.getLive() && !chkLive.isSelected()) ||
+    		 (!selectedObject.getLive() && chkLive.isSelected())){
+    		disabled = false;
+    	}
+    	
+    	if ( (selectedObject.getVersion() == 5 && rbtnRel6.isSelected()) ||
+    		 (selectedObject.getVersion() == 6 && rbtnRel5.isSelected())){
+    		disabled = false;
+    	}
+    	
+    	btnUpdate.setDisable(disabled);
 	}
 
 	public void showObjectDetail(ObjectModel data) {
@@ -374,8 +369,13 @@ public class PrimeCodeObjectsViewController implements Initializable {
 			rbtnRel6.setDisable(false);
 			chkLive.setDisable(false);
 			txtName.requestFocus();
-			btnUpdate.setDisable(false);
+			//btnUpdate.setDisable(false);
 		}
+	}
+	
+	@FXML
+	private void handleUpdate(Event event){
+		saveObjectUpdate(false);
 	}
 	
 	@FXML
@@ -396,10 +396,12 @@ public class PrimeCodeObjectsViewController implements Initializable {
 					ObservableList<ObjectModel> list = FXCollections.observableArrayList(tblPrimeCodeList.getItems());
 					list.remove(tblPrimeCodeList.getItems().get(selectedIndex));
 					sortedObjects = new SortedList<>(list);
+					tblPrimeCodeList.getItems().clear();
+					tblPrimeCodeList.setItems(sortedObjects);
 					//tblPrimeCodeList.getItems().remove(selectedObject);
 					//sortedObjects.remove(tblPrimeCodeList.getItems().get(selectedIndex));
 				} catch (Exception e) {
-					
+					e.printStackTrace();
 				}
 			}
 		}

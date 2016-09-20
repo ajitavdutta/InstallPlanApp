@@ -147,7 +147,7 @@
                               <CheckBox fx:id="chkLive" mnemonicParsing="false" text="Live in Production" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" spacing="25.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                                  <children>
-                                    <Button fx:id="btnUpdate" mnemonicParsing="false" prefHeight="25.0" prefWidth="102.0" text="Update..." />
+                                    <Button fx:id="btnUpdate" mnemonicParsing="false" onAction="#handleUpdate" prefHeight="25.0" prefWidth="102.0" text="Update..." />
                                     <Button fx:id="btnAdd" mnemonicParsing="false" prefHeight="25.0" prefWidth="102.0" text="Add..." />
                                  </children>
                               </HBox>
