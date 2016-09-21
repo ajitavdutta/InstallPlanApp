@@ -1,6 +1,11 @@
 package com.app.view;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Properties;
+
 import com.app.Main;
+import com.app.models.SessionModel;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,8 +22,16 @@ public class SampleMain extends Application {
 		loader.setLocation(getClass().getResource("PrimeCodeObjectsView.fxml"));
 
 		AnchorPane root = (AnchorPane) loader.load();
-		/*PrimeCodeObjectsViewController controller = loader.getController();
-		controller.loadData();*/
+
+		SessionModel session_data = getSessionData(primaryStage);
+
+		PrimeCodeObjectsViewController controller = loader.getController();
+		
+		if (session_data != null) {
+			controller.setSession_data(session_data);
+			controller.loadData();
+		}
+
 		Scene scene = new Scene(root);
 		scene.getStylesheets().add(Main.class.getResource("application.css").toExternalForm());
 		primaryStage.setTitle("Object Viewer");
@@ -28,6 +41,26 @@ public class SampleMain extends Application {
 		primaryStage.setMinHeight(600.0);
 		primaryStage.setMaximized(false);
 		primaryStage.show();
+
+	}
+
+	public SessionModel getSessionData(Stage primaryStage) {
+		try {
+			Properties prop = new Properties();
+			InputStream input = new FileInputStream("config/app-config.properties");
+			prop.load(input);
+
+			SessionModel session_data = new SessionModel();
+			
+			session_data.setPrimaryStage(primaryStage);
+			session_data.setUser_name(System.getProperty("user.name"));
+			session_data.setXmlPrimeCodeFile(prop.getProperty("PRIMECODE-XML"));
+			return session_data;
+		} catch (Exception e) {
+			// TODO: handle exception
+			return null;
+		}
+
 	}
 
 	public static void main(String[] args) {

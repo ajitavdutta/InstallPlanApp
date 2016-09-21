@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
-<?import com.app.util.RestrictiveTextField?>
+
 
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.view.InstallConfigController">
    <children>
@@ -57,7 +57,7 @@
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <RestrictiveTextField fx:id="txtSDMNumber" promptText="SDM Number" GridPane.columnIndex="1" />
+                                    <TextField fx:id="txtSDMNumber" promptText="SDM Number" GridPane.columnIndex="1" />
                                     <Label text="Install Date" GridPane.columnIndex="2">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
@@ -113,7 +113,7 @@
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <RestrictiveTextField fx:id="txtPrimeCodeRef" promptText="PrimeCode User Change No." GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <TextField fx:id="txtPrimeCodeRef" promptText="PrimeCode User Change No." GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                     <Label text="Prod System" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                        <font>
                                           <Font name="System Bold" size="12.0" />

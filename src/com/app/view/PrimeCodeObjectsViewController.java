@@ -8,13 +8,13 @@ import java.util.ResourceBundle;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import com.app.test.model.ObjectModel;
+import com.app.models.ObjectModel;
+import com.app.models.SessionModel;
 import com.app.test.model.PrimeCodeObjectModel;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -108,6 +108,8 @@ public class PrimeCodeObjectsViewController implements Initializable {
 	private SortedList<ObjectModel> sortedObjects;
 	private FilteredList<ObjectModel> filteredObjects;
 	private ObjectModel selectedObject = null;
+	private SessionModel session_data;
+	
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -205,17 +207,21 @@ public class PrimeCodeObjectsViewController implements Initializable {
 		chkLive.setDisable(true);
 
 		rbBtnGrp = new ToggleGroup();
+		
 		rbtnRel5.setToggleGroup(rbBtnGrp);
 		rbtnRel6.setToggleGroup(rbBtnGrp);
-
-		loadData();
-		
+		//loadData();
 	}
-	
+	/**
+	 * Save the changes made to the object details to the SortedList.
+	 * 
+	 * @param reqConf - Required confirmation flag.
+	 */
 	private void saveObjectUpdate(boolean reqConf){
 		if (reqConf){
 			Alert alert = new Alert(AlertType.CONFIRMATION);
-			alert.initOwner(tblPrimeCodeList.getParent().getScene().getWindow());
+			//alert.initOwner(tblPrimeCodeList.getParent().getScene().getWindow());
+			alert.initOwner(session_data.getPrimaryStage());
 			alert.setTitle("Update Confirmation");
 			alert.setHeaderText( "The Object details have been modified.");
 			alert.setContentText("Do you want to save the changes made to the Object?");
@@ -330,7 +336,8 @@ public class PrimeCodeObjectsViewController implements Initializable {
 
 	public void loadData() {
 		try {
-			File xmlFile = new File("resources/xml/PrimeCodeData.xml");
+			//File xmlFile = new File("data/xml/PrimeCodeData.xml");
+			File xmlFile = new File(session_data.getXmlPrimeCodeFile());
 			if (xmlFile.exists()) {
 				loadObjectsFromFile(xmlFile);
 				if (objects != null) {
@@ -405,5 +412,11 @@ public class PrimeCodeObjectsViewController implements Initializable {
 				}
 			}
 		}
+	}
+	public SessionModel getSession_data() {
+		return session_data;
+	}
+	public void setSession_data(SessionModel session_data) {
+		this.session_data = session_data;
 	}
 }
