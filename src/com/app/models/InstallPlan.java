@@ -20,10 +20,10 @@ public class InstallPlan {
 	private SimpleStringProperty prodSys;
 	private SimpleStringProperty drSys;
 
-	private ObservableList<FileList> rollFileList;
-	private ObservableList<ObjectList> objList;
+	private ObservableList<RollFile> rollFileList;
+	private ObservableList<TandemObject> objList;
 
-	private ObservableList<StepModel> priorToInstall;
+	
 
 	public InstallPlan() {
 		sdmNumber = new SimpleStringProperty();
@@ -37,7 +37,6 @@ public class InstallPlan {
 
 		rollFileList = FXCollections.observableArrayList();
 		objList = FXCollections.observableArrayList();
-		priorToInstall = FXCollections.observableArrayList();
 	}
 
 	public String getSdmNumber() {
@@ -144,34 +143,24 @@ public class InstallPlan {
 		return drSys;
 	}
 
-	public ObservableList<FileList> getRollFileList() {
+	public ObservableList<RollFile> getRollFileList() {
 		return rollFileList;
 	}
 
 	@XmlElementWrapper(name = "ROLLFILE-LIST")
 	@XmlElement(name = "FILE")
-	public void setRollFileList(ObservableList<FileList> rollFileList) {
+	public void setRollFileList(ObservableList<RollFile> rollFileList) {
 		this.rollFileList = rollFileList;
 	}
 
-	public ObservableList<ObjectList> getObjList() {
+	public ObservableList<TandemObject> getObjList() {
 		return objList;
 	}
 
 	@XmlElementWrapper(name = "OBJECT-LIST")
 	@XmlElement(name = "OBJECT")
-	public void setObjList(ObservableList<ObjectList> objList) {
+	public void setObjList(ObservableList<TandemObject> objList) {
 		this.objList = objList;
-	}
-
-	public ObservableList<StepModel> getPriorToInstall() {
-		return priorToInstall;
-	}
-
-	@XmlElementWrapper(name = "PRE-INSTALL-STEPS")
-	@XmlElement(name = "STEP")
-	public void setPriorToInstall(ObservableList<StepModel> priorToInstall) {
-		this.priorToInstall = priorToInstall;
 	}
 
 }

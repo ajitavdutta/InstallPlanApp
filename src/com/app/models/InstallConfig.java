@@ -1,6 +1,7 @@
 package com.app.models;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class InstallConfig {
@@ -8,18 +9,25 @@ public class InstallConfig {
 	private SimpleStringProperty primeCodeRef;
 	private SimpleStringProperty description;
 	private SimpleStringProperty workRequest;
-	private SimpleStringProperty prodSys;
-	private SimpleStringProperty drSys;
-	private SimpleStringProperty devSys;
-	private ObservableList<RollFileModel> rollFiles;
-	private ObservableList<InstallObjectModel> installObjects;
-
-	public SimpleStringProperty getNumber() {
-		return number;
+	private ObservableList<RollFile> rollFiles;
+	private ObservableList<TandemObject> tandemObjects;
+	
+	public InstallConfig(){
+		super();
+		number = new SimpleStringProperty();
+		primeCodeRef = new SimpleStringProperty();
+		description = new SimpleStringProperty();
+		workRequest  = new SimpleStringProperty();
+		rollFiles = FXCollections.observableArrayList();
+		tandemObjects = FXCollections.observableArrayList();
 	}
 
-	public void setNumber(SimpleStringProperty number) {
-		this.number = number;
+	public String getNumber() {
+		return number.get();
+	}
+
+	public void setNumber(String number) {
+		this.number.set(number.toUpperCase());
 	}
 
 	public SimpleStringProperty getPrimeCodeRef() {
@@ -46,44 +54,20 @@ public class InstallConfig {
 		this.workRequest = workRequest;
 	}
 
-	public SimpleStringProperty getProdSys() {
-		return prodSys;
-	}
-
-	public void setProdSys(SimpleStringProperty prodSys) {
-		this.prodSys = prodSys;
-	}
-
-	public SimpleStringProperty getDrSys() {
-		return drSys;
-	}
-
-	public void setDrSys(SimpleStringProperty drSys) {
-		this.drSys = drSys;
-	}
-
-	public SimpleStringProperty getDevSys() {
-		return devSys;
-	}
-
-	public void setDevSys(SimpleStringProperty devSys) {
-		this.devSys = devSys;
-	}
-
-	public ObservableList<RollFileModel> getRollFiles() {
+	public ObservableList<RollFile> getRollFiles() {
 		return rollFiles;
 	}
 
-	public void setRollFiles(ObservableList<RollFileModel> rollFiles) {
+	public void setRollFiles(ObservableList<RollFile> rollFiles) {
 		this.rollFiles = rollFiles;
 	}
 
-	public ObservableList<InstallObjectModel> getInstallObjects() {
-		return installObjects;
+	public ObservableList<TandemObject> getInstallObjects() {
+		return tandemObjects;
 	}
 
-	public void setInstallObjects(ObservableList<InstallObjectModel> installObjects) {
-		this.installObjects = installObjects;
+	public void setInstallObjects(ObservableList<TandemObject> tandemObjects) {
+		this.tandemObjects = tandemObjects;
 	}
 	
 }

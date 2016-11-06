@@ -8,9 +8,9 @@ import java.util.ResourceBundle;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import com.app.models.ObjectModel;
-import com.app.models.SessionModel;
-import com.app.test.model.PrimeCodeObjectModel;
+import com.app.models.PrimeCodeObjects;
+import com.app.models.Session;
+import com.app.models.TandemObject;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -79,19 +79,19 @@ public class PrimeCodeObjectsViewController implements Initializable {
 	private Button btnCancel;
 
 	@FXML
-	private TableView<ObjectModel> tblPrimeCodeList;
+	private TableView<TandemObject> tblPrimeCodeList;
 
 	@FXML
-	private TableColumn<ObjectModel, String> colName;
+	private TableColumn<TandemObject, String> colName;
 
 	@FXML
-	private TableColumn<ObjectModel, String> colLocation;
+	private TableColumn<TandemObject, String> colLocation;
 
 	@FXML
-	private TableColumn<ObjectModel, Integer> colVersion;
+	private TableColumn<TandemObject, Integer> colVersion;
 
 	@FXML
-	private TableColumn<ObjectModel, String> colLive;
+	private TableColumn<TandemObject, String> colLive;
 
 	@FXML
 	private CheckBox chkRel5;
@@ -104,11 +104,11 @@ public class PrimeCodeObjectsViewController implements Initializable {
 
 	private ToggleGroup rbBtnGrp;
 
-	private ObservableList<ObjectModel> objects;
-	private SortedList<ObjectModel> sortedObjects;
-	private FilteredList<ObjectModel> filteredObjects;
-	private ObjectModel selectedObject = null;
-	private SessionModel session_data;
+	private ObservableList<TandemObject> objects;
+	private SortedList<TandemObject> sortedObjects;
+	private FilteredList<TandemObject> filteredObjects;
+	private TandemObject selectedObject = null;
+	private Session session_data;
 	
 	
 	@Override
@@ -181,11 +181,11 @@ public class PrimeCodeObjectsViewController implements Initializable {
 			}
 		});
 
-		tblPrimeCodeList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ObjectModel>() {
+		tblPrimeCodeList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TandemObject>() {
 
 			@Override
-			public void changed(ObservableValue<? extends ObjectModel> observable, ObjectModel oldValue,
-					ObjectModel newValue) {
+			public void changed(ObservableValue<? extends TandemObject> observable, TandemObject oldValue,
+					TandemObject newValue) {
 				if (tblPrimeCodeList.getSelectionModel().getSelectedItem() != null) {
 					if ( !btnUpdate.isDisabled()){
 						// TODO 
@@ -314,7 +314,7 @@ public class PrimeCodeObjectsViewController implements Initializable {
     	btnUpdate.setDisable(disabled);
 	}
 
-	public void showObjectDetail(ObjectModel data) {
+	public void showObjectDetail(TandemObject data) {
 		if (data == null) {
 			txtName.clear();
 			txtLocation.clear();
@@ -357,9 +357,9 @@ public class PrimeCodeObjectsViewController implements Initializable {
 
 	public void loadObjectsFromFile(File file) {
 		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(PrimeCodeObjectModel.class);
+			JAXBContext jaxbContext = JAXBContext.newInstance(PrimeCodeObjects.class);
 			Unmarshaller unMarshaller = jaxbContext.createUnmarshaller();
-			PrimeCodeObjectModel objs = (PrimeCodeObjectModel) unMarshaller.unmarshal(file);
+			PrimeCodeObjects objs = (PrimeCodeObjects) unMarshaller.unmarshal(file);
 			objects = objs.getObjects();
 		} catch (Exception e) {
 			// File is empty so return a null
@@ -400,7 +400,7 @@ public class PrimeCodeObjectsViewController implements Initializable {
 			Optional<ButtonType>result = alert.showAndWait();
 			if ( result.get() == ButtonType.OK){
 				try {
-					ObservableList<ObjectModel> list = FXCollections.observableArrayList(tblPrimeCodeList.getItems());
+					ObservableList<TandemObject> list = FXCollections.observableArrayList(tblPrimeCodeList.getItems());
 					list.remove(tblPrimeCodeList.getItems().get(selectedIndex));
 					sortedObjects = new SortedList<>(list);
 					tblPrimeCodeList.getItems().clear();
@@ -413,10 +413,10 @@ public class PrimeCodeObjectsViewController implements Initializable {
 			}
 		}
 	}
-	public SessionModel getSession_data() {
+	public Session getSession_data() {
 		return session_data;
 	}
-	public void setSession_data(SessionModel session_data) {
+	public void setSession_data(Session session_data) {
 		this.session_data = session_data;
 	}
 }

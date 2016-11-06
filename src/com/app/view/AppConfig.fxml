@@ -11,47 +11,60 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="900.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.view.AppConfigController">
    <children>
-      <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <VBox spacing="10.0">
+      <BorderPane prefHeight="227.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+         <top>
+            <AnchorPane BorderPane.alignment="CENTER">
                <children>
-                  <HBox spacing="10.0">
+                  <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <TitledPane animated="false" collapsible="false" text="SDM Details">
+                        <TitledPane animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="SDM Details" HBox.hgrow="ALWAYS">
                            <content>
-                              <AnchorPane minHeight="0.0" minWidth="0.0">
+                              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
                                  <children>
                                     <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <Label text="Number             ">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField />
+                                                <TextField fx:id="txtNum" />
                                                 <Label text="Date and Time">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                    <HBox.margin>
-                                                      <Insets left="100.0" />
-                                                   </HBox.margin>
-                                                </Label>
-                                                <DatePicker prefHeight="25.0" prefWidth="136.0" />
-                                                <TextField prefHeight="25.0" prefWidth="77.0">
-                                                   <HBox.margin>
                                                       <Insets left="10.0" />
                                                    </HBox.margin>
-                                                </TextField>
+                                                </Label>
+                                                <DatePicker fx:id="installDate" prefHeight="25.0" prefWidth="108.0" />
+                                                <ComboBox fx:id="cmbHour" promptText="HH" />
+                                                <Label text=":">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                   <HBox.margin>
+                                                      <Insets left="-5.0" right="-5.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <ComboBox fx:id="cmbMin" promptText="MM" />
+                                                <Label fx:id="lblIST" text="Label">
+                                                   <HBox.margin>
+                                                      <Insets />
+                                                   </HBox.margin>
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
                                              </children>
                                              <padding>
                                                 <Insets left="30.0" />
@@ -64,7 +77,11 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField prefHeight="25.0" prefWidth="785.0" />
+                                                <TextField fx:id="txtDescr" prefHeight="25.0" HBox.hgrow="ALWAYS">
+                                                   <HBox.margin>
+                                                      <Insets />
+                                                   </HBox.margin>
+                                                </TextField>
                                              </children>
                                              <padding>
                                                 <Insets left="30.0" />
@@ -77,7 +94,11 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField prefHeight="25.0" prefWidth="785.0" />
+                                                <TextField fx:id="txtWR" prefHeight="25.0" HBox.hgrow="ALWAYS">
+                                                   <HBox.margin>
+                                                      <Insets />
+                                                   </HBox.margin>
+                                                </TextField>
                                              </children>
                                              <padding>
                                                 <Insets left="30.0" />
@@ -90,25 +111,44 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField prefHeight="25.0" prefWidth="151.0" />
+                                                <TextField fx:id="txtPrimeCode" prefHeight="25.0" prefWidth="151.0" />
                                                 <Label text="Prod Sys">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <ComboBox prefHeight="25.0" prefWidth="106.0" />
+                                                <TextField fx:id="txtProd" prefHeight="25.0" prefWidth="59.0" />
                                                 <Label text="DR Sys">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <ComboBox prefHeight="25.0" prefWidth="106.0" />
+                                                <TextField fx:id="txtDR" prefHeight="25.0" prefWidth="59.0" />
                                                 <Label text="Dev Sys">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <ComboBox prefHeight="25.0" prefWidth="106.0" />
+                                                <ComboBox fx:id="cmbDevSys" maxWidth="1.7976931348623157E308" promptText="-- Select --" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="30.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                             <children>
+                                                <Label text="Designer           ">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="txtDesigner" prefHeight="25.0" prefWidth="281.0" />
+                                                <Label text="Release Manager       ">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="txtRM" prefHeight="25.0" prefWidth="281.0" />
                                              </children>
                                              <padding>
                                                 <Insets left="30.0" />
@@ -125,38 +165,64 @@
                         </TitledPane>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+               </children>
+            </AnchorPane>
+         </top>
+         <bottom>
+            <ButtonBar BorderPane.alignment="CENTER">
+               <buttons>
+                  <Button mnemonicParsing="false" text="Save" />
+                  <Button fx:id="btnCancel" cancelButton="true" defaultButton="true" mnemonicParsing="false" onAction="#handelCancel" text="Cancel" />
+               </buttons>
+               <BorderPane.margin>
+                  <Insets top="10.0" />
+               </BorderPane.margin>
+            </ButtonBar>
+         </bottom>
+         <center>
+            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets top="10.0" />
+               </BorderPane.margin>
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="659.0" prefWidth="1080.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <TitledPane animated="false" collapsible="false" text="Objects">
+                        <TitledPane animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Objects" HBox.hgrow="ALWAYS">
                            <content>
-                              <AnchorPane minHeight="0.0" minWidth="0.0">
+                              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                  <children>
                                     <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <HBox spacing="20.0">
+                                          <HBox prefHeight="371.0" prefWidth="558.0" spacing="10.0" VBox.vgrow="ALWAYS">
                                              <children>
-                                                <TextField fx:id="txtObjSearch" prefHeight="25.0" prefWidth="325.0" promptText="Object Search" />
+                                                <VBox prefHeight="698.0" prefWidth="442.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <TextField fx:id="txtObjSearch" maxWidth="1.7976931348623157E308" promptText="Object Search" VBox.vgrow="ALWAYS" />
+                                                      <TableView fx:id="tblInstallObjects" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                         <columns>
+                                                            <TableColumn fx:id="colObjVersion" prefWidth="75.0" text="Version" />
+                                                            <TableColumn fx:id="colObjName" prefWidth="100.0" text="Object Name" />
+                                                            <TableColumn fx:id="colLocation" prefWidth="150.0" text="Location" />
+                                                            <TableColumn fx:id="colObjLive" prefWidth="66.00003051757812" text="Live" />
+                                                         </columns>
+                                                      </TableView>
+                                                   </children>
+                                                </VBox>
+                                                <VBox spacing="5.0" HBox.hgrow="NEVER">
+                                                   <children>
+                                                      <Button fx:id="btnAddObj" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handelAdd" prefHeight="25.0" prefWidth="106.0" text="Add" />
+                                                      <Button fx:id="btnEditObj" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handelEdit" prefHeight="25.0" prefWidth="106.0" text="Edit" />
+                                                      <Button fx:id="btnDelObj" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handelDel" prefHeight="25.0" prefWidth="106.0" text="Delete" />
+                                                      <Button fx:id="btnObjClear" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleClear" text="Clear" />
+                                                   </children>
+                                                   <HBox.margin>
+                                                      <Insets top="50.0" />
+                                                   </HBox.margin>
+                                                </VBox>
                                              </children>
                                              <VBox.margin>
                                                 <Insets />
                                              </VBox.margin>
-                                          </HBox>
-                                          <HBox spacing="20.0">
-                                             <children>
-                                                <TableView fx:id="tblInstallObjects" prefHeight="250.0" prefWidth="325.0">
-                                                   <columns>
-                                                      <TableColumn prefWidth="100.0" text="C1" />
-                                                      <TableColumn prefWidth="100.0" text="C2" />
-                                                   </columns>
-                                                </TableView>
-                                                <VBox prefHeight="200.0" prefWidth="99.0" spacing="5.0">
-                                                   <children>
-                                                      <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="106.0" text="Add" />
-                                                      <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="106.0" text="Edit" />
-                                                      <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="106.0" text="Delete" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
                                           </HBox>
                                        </children>
                                     </VBox>
@@ -167,31 +233,35 @@
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </TitledPane>
-                        <TitledPane animated="false" collapsible="false" text="Roll Files">
+                        <TitledPane animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="659.0" prefWidth="563.0" text="Roll Files" HBox.hgrow="ALWAYS">
                            <content>
-                              <AnchorPane minHeight="0.0" minWidth="0.0">
+                              <AnchorPane maxWidth="1.7976931348623157E308">
                                  <children>
                                     <VBox layoutX="59.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <HBox>
+                                          <HBox spacing="10.0" VBox.vgrow="ALWAYS">
                                              <children>
-                                                <TextField fx:id="txtRollFileSearch" prefWidth="325.0" promptText="RollFile Search" />
-                                             </children>
-                                          </HBox>
-                                          <HBox spacing="20.0">
-                                             <children>
-                                                <TableView fx:id="tblRollFiles" prefHeight="250.0" prefWidth="325.0">
-                                                   <columns>
-                                                      <TableColumn prefWidth="75.0" text="C1" />
-                                                      <TableColumn prefWidth="75.0" text="C2" />
-                                                   </columns>
-                                                </TableView>
-                                                <VBox prefHeight="200.0" prefWidth="99.0" spacing="5.0">
+                                                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="106.0" text="Add" />
-                                                      <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="106.0" text="Edit" />
-                                                      <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="106.0" text="Delete" />
+                                                      <TextField fx:id="txtRollFileSearch" maxWidth="1.7976931348623157E308" promptText="RollFile Search" VBox.vgrow="ALWAYS" />
+                                                      <TableView fx:id="tblRollFiles" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                         <columns>
+                                                            <TableColumn fx:id="colRollFileName" prefWidth="250.0" text="RollFile Name" />
+                                                            <TableColumn fx:id="colRollFileProd" prefWidth="75.0" text="Product" />
+                                                         </columns>
+                                                      </TableView>
                                                    </children>
+                                                </VBox>
+                                                <VBox spacing="5.0" HBox.hgrow="NEVER">
+                                                   <children>
+                                                      <Button fx:id="btnRollFileAdd" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handelAdd" prefHeight="25.0" prefWidth="106.0" text="Add" />
+                                                      <Button fx:id="btnRollFileEdit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handelEdit" prefHeight="25.0" prefWidth="106.0" text="Edit" />
+                                                      <Button fx:id="btnRollFileDel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handelDel" prefHeight="25.0" prefWidth="106.0" text="Delete" />
+                                                      <Button fx:id="btnRollFileClear" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleClear" text="Clear" />
+                                                   </children>
+                                                   <HBox.margin>
+                                                      <Insets top="50.0" />
+                                                   </HBox.margin>
                                                 </VBox>
                                              </children>
                                           </HBox>
@@ -206,14 +276,9 @@
                         </TitledPane>
                      </children>
                   </HBox>
-                  <ButtonBar>
-                     <buttons>
-                        <Button mnemonicParsing="false" text="Button" />
-                     </buttons>
-                  </ButtonBar>
                </children>
-            </VBox>
-         </children>
-      </StackPane>
+            </AnchorPane>
+         </center>
+      </BorderPane>
    </children>
 </AnchorPane>

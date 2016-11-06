@@ -3,41 +3,32 @@ package com.app.view;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.app.models.Session;
+
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 
 public class AppScreenController implements Initializable{
-	@FXML
-	private TabPane tabPane;
 	
 	@FXML
-	private Tab tabConfig;
-
-	@FXML
-	private BorderPane apConfigPane;
+	private AppConfigController appConfigController;
+	
+	
+	private Session session;
+	
+	public AppScreenController(Session session){
+		this.setSession(session);
+	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		try {
-			this.tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-			this.tabPane.getStyleClass().add("floating");
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(getClass().getResource("AppConfig.fxml"));
-			
-			//anchorPane.setPrefWidth(spConfigPane.getPrefWidth());
-			apConfigPane.getChildren().clear();
-			apConfigPane.setCenter((AnchorPane)loader.load());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
 	}
 
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
 }

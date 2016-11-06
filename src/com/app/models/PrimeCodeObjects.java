@@ -1,36 +1,34 @@
-package com.app.test.model;
+package com.app.models;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import com.app.models.ObjectModel;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 @XmlRootElement(name = "PrimeCodeObjects")
-public class PrimeCodeObjectModel {
-	private ObservableList<ObjectModel> objects;
+public class PrimeCodeObjects {
+	private ObservableList<TandemObject> objects;
 	
-	public PrimeCodeObjectModel(){
+	public PrimeCodeObjects(){
 		this.objects = FXCollections.observableArrayList();
 	}
 	
-	public PrimeCodeObjectModel(ObjectModel object){
+	public PrimeCodeObjects(TandemObject object){
 		this.objects = FXCollections.observableArrayList();
 		objects.add(object);
 	}
 	
-	public ObservableList<ObjectModel> getObjects() {
+	public ObservableList<TandemObject> getObjects() {
 		return objects;
 	}
 
 	@XmlElement(name = "Object")
-	public void setObjects(ObservableList<ObjectModel> objects) {
+	public void setObjects(ObservableList<TandemObject> objects) {
 		this.objects = objects;
 	}
 	
-	public void addObject(ObjectModel object){
+	public void addObject(TandemObject object){
 		//Check if the object is already present or not.
 		boolean found = false;
 		int i = 0;
@@ -45,7 +43,7 @@ public class PrimeCodeObjectModel {
 		}
 	}
 	
-	private boolean matchObject(ObjectModel obj1, ObjectModel obj2){
+	private boolean matchObject(TandemObject obj1, TandemObject obj2){
 		//System.out.println(obj1.getName() + "  " + obj2.getName());
 		if( obj1.getName().equalsIgnoreCase(obj2.getName()) &&
 		    obj1.getLocation().equalsIgnoreCase(obj2.getLocation()) && 

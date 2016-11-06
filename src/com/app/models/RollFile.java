@@ -3,14 +3,20 @@ package com.app.models;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
-public class RollFileModel {
+public class RollFile {
 	private SimpleStringProperty file;
 	private SimpleIntegerProperty prod;
 	
-	public RollFileModel(String file, int prod){
+	public RollFile(){
 		super();
-		this.file.set(file);
-		this.prod.set(prod);
+		file = new SimpleStringProperty();
+		prod = new SimpleIntegerProperty();
+	}
+	
+	public RollFile(String file, int prod){
+		super();
+		this.file = new SimpleStringProperty(file.toUpperCase());
+		this.prod = new SimpleIntegerProperty(prod);
 	}
 
 	public String getFile() {
@@ -22,7 +28,7 @@ public class RollFileModel {
 	}
 
 	public void setFile(String file) {
-		this.file.set(file);
+		this.file.set(file.toUpperCase());
 	}
 
 	public int getProd() {
