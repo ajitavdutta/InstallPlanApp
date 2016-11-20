@@ -1,5 +1,6 @@
 package com.app.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.time.LocalDateTime;
@@ -9,8 +10,17 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import com.app.models.ApplicationInfo;
+import com.app.models.InstallConfig;
+import com.app.models.PrimeCodeObjects;
+import com.app.models.Session;
 import com.app.models.TandemObject;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class AppUtility {
@@ -173,6 +183,50 @@ public class AppUtility {
 		}
 
 		return null;
+	}
+	
+	public static ObservableList<TandemObject> loadPrimeCodeDB(String filename) throws JAXBException{
+		
+		if (filename == null) {
+			return null;
+		}
+		
+		File file = new File(filename);
+		if ( !file.exists()){
+			return null;
+		}
+		
+		JAXBContext jaxbContext = JAXBContext.newInstance(PrimeCodeObjects.class);
+		Unmarshaller unMarshaller = jaxbContext.createUnmarshaller();
+		PrimeCodeObjects objs = (PrimeCodeObjects) unMarshaller.unmarshal(file);
+		
+		return objs.getObjects();
+	}
+
+	public static void loadSystemConfig(Session session) {
+		try {
+			ApplicationInfo appInfo = session.getAppInfo();
+			InstallConfig installConfig = session.getInstallConfig();
+
+			// Open and load the Application Config properties file.
+			Properties prop = new Properties();
+			InputStream input = new FileInputStream("config/app-config.properties");
+			prop.load(input);
+
+			// Load the Session
+			session.setUserName(System.getProperty("user.name"));
+			//appInfo.setParentObj(parent);
+			//appInfo.setParentStage(stage);
+			appInfo.setPCXmlFile(prop.getProperty("XML-PRIMECODE"));
+			appInfo.setProducts(FXCollections.observableArrayList(prop.getProperty("B24-PRODUCTS").split(",")));
+
+			installConfig.setDevSys(prop.getProperty("DEV-SYS"));
+			installConfig.setProdSys(prop.getProperty("PROD-SYS"));
+			installConfig.setDrSys(prop.getProperty("DR-SYS"));
+			//installConfig.setFUPCmdFile(prop.getProperty("FUP-OUT-FILE"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

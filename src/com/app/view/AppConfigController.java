@@ -7,6 +7,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
+import com.app.models.ApplicationInfo;
+import com.app.models.InstallConfig;
 import com.app.models.RollFile;
 import com.app.models.Session;
 import com.app.models.TandemObject;
@@ -68,7 +70,7 @@ public class AppConfigController implements Initializable {
 	private TextField txtDR;
 
 	@FXML
-	private ComboBox<String> cmbDevSys;
+	private TextField txtDev;
 	/*
 	 * FXML variables for Install Objects
 	 */
@@ -98,7 +100,7 @@ public class AppConfigController implements Initializable {
 
 	@FXML
 	private Button btnDelObj;
-	
+
 	@FXML
 	private Button btnObjClear;
 	/*
@@ -124,7 +126,7 @@ public class AppConfigController implements Initializable {
 
 	@FXML
 	private Button btnRollFileDel;
-	
+
 	@FXML
 	private Button btnRollFileClear;
 
@@ -134,7 +136,7 @@ public class AppConfigController implements Initializable {
 	private Session session;
 	private static final String DATE_TIME_FORMAT = "dd-MMM-yyyy HH:mm";
 	// private static final String TIME_FORMAT = "HH:mm";
-
+	
 	private ObservableList<TandemObject> objects;
 	private ObservableList<RollFile> rollFiles;
 
@@ -143,6 +145,9 @@ public class AppConfigController implements Initializable {
 
 	private FilteredList<TandemObject> filteredObjects;
 	private FilteredList<RollFile> filteredRollFiles;
+	
+	private ApplicationInfo appInfo;
+	private InstallConfig installConfig;
 
 	public AppConfigController(Session session) {
 		this.session = session;
@@ -156,7 +161,7 @@ public class AppConfigController implements Initializable {
 		btnDelObj.setDisable(true);
 		btnRollFileDel.setDisable(true);
 		btnRollFileEdit.setDisable(true);
-
+		
 		populateFromSession();
 		screenDateTimeInit();
 		installTableInit();
@@ -170,57 +175,63 @@ public class AppConfigController implements Initializable {
 	 * 
 	 */
 	private void installTableInit() {
-		colObjName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-		colObjLive.setCellValueFactory(cellData -> cellData.getValue().liveProperty().asString());
-		colObjVersion.setCellValueFactory(cellData -> cellData.getValue().versionProperty().asObject());
-		colLocation.setCellValueFactory(cellData -> cellData.getValue().locationProperty());
-		
-		objects = session.getInstallConfig().getInstallObjects();
-		filteredObjects = new FilteredList<>(objects, p -> true);
+		try {
+			colObjName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+			colObjLive.setCellValueFactory(cellData -> cellData.getValue().liveProperty().asString());
+			colObjVersion.setCellValueFactory(cellData -> cellData.getValue().versionProperty().asObject());
+			colLocation.setCellValueFactory(cellData -> cellData.getValue().locationProperty());
 
-		// Install Object Text filters
-		txtObjSearch.textProperty().addListener((observable, oldValue, newValue) -> {
-			filteredObjects.setPredicate(object -> {
-				if (newValue == null || newValue.isEmpty()) {
-					return true;
-				} else {
-					String lowerCaseFilter = newValue.toLowerCase();
-					if (object.getName().toLowerCase().contains(lowerCaseFilter)) {
+			//objects = AppUtility.loadPrimeCodeDB(session.getAppInfo().getPCXmlFile());
+			objects = installConfig.getObjects();
+			filteredObjects = new FilteredList<>(objects, p -> true);
+
+			// Install Object Text filters
+			txtObjSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+				filteredObjects.setPredicate(object -> {
+					if (newValue == null || newValue.isEmpty()) {
 						return true;
+					} else {
+						String lowerCaseFilter = newValue.toLowerCase();
+						if (object.getName().toLowerCase().contains(lowerCaseFilter)) {
+							return true;
+						}
+						return false;
 					}
-					return false;
+				});
+			});
+
+			sortedObjects = new SortedList<>(filteredObjects);
+			sortedObjects.comparatorProperty().bind(tblInstallObjects.comparatorProperty());
+			tblInstallObjects.setItems(sortedObjects);
+
+			tblInstallObjects.getItems().clear();
+			tblInstallObjects.setItems(sortedObjects);
+
+			// Detect double click on the InstallObject Table
+			tblInstallObjects.setRowFactory(obj -> {
+				TableRow<TandemObject> row = new TableRow<>();
+				row.setOnMouseClicked(event -> {
+					if (event.getClickCount() == 2 && (!row.isEmpty())) {
+						TandemObject rowObj = row.getItem();
+						showObjectEditWindow(rowObj);
+					}
+				});
+				return row;
+			});
+
+			tblInstallObjects.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+				if (newValue != null) {
+					btnEditObj.setDisable(false);
+					btnDelObj.setDisable(false);
+				} else {
+					btnEditObj.setDisable(true);
+					btnDelObj.setDisable(true);
 				}
 			});
-		});
-
-		sortedObjects = new SortedList<>(filteredObjects);
-		sortedObjects.comparatorProperty().bind(tblInstallObjects.comparatorProperty());
-		tblInstallObjects.setItems(sortedObjects);
-
-		tblInstallObjects.getItems().clear();
-		tblInstallObjects.setItems(sortedObjects);
-
-		// Detect double click on the InstallObject Table
-		tblInstallObjects.setRowFactory(obj -> {
-			TableRow<TandemObject> row = new TableRow<>();
-			row.setOnMouseClicked(event -> {
-				if (event.getClickCount() == 2 && (!row.isEmpty())) {
-					TandemObject rowObj = row.getItem();
-					showObjectEditWindow(rowObj);
-				}
-			});
-			return row;
-		});
-
-		tblInstallObjects.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
-			if (newValue != null) {
-				btnEditObj.setDisable(false);
-				btnDelObj.setDisable(false);
-			} else {
-				btnEditObj.setDisable(true);
-				btnDelObj.setDisable(true);
-			}
-		});
+		} catch (Exception e) {
+			e.printStackTrace();
+			// TODO: handle exception
+		}
 	}
 
 	/**
@@ -231,10 +242,69 @@ public class AppConfigController implements Initializable {
 	 * 
 	 */
 	private void screenDateTimeInit() {
-		installDate.setValue(LocalDate.now());
-		lblIST.setText(
-				AppUtility.convertASTtoIST(LocalDateTime.now()).format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))
-						+ "  ( IST )");
+		// ChangeListeners for Date and Time
+		// DatePicker ChangeListener
+		installDate.valueProperty().addListener(new ChangeListener<LocalDate>() {
+			@Override
+			public void changed(ObservableValue<? extends LocalDate> observable, LocalDate oldValue,
+					LocalDate newValue) {
+				try {
+					int hh = new Integer(cmbHour.getValue()).intValue();
+					int mm = new Integer(cmbMin.getValue()).intValue();
+					LocalTime lt = LocalTime.of(hh, mm);
+					LocalDateTime ldt = LocalDateTime.of(newValue, lt);
+					lblIST.setText(AppUtility.convertASTtoIST(ldt).format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))
+							+ "  ( IST )");
+				} catch (Exception e) {
+					// Set the default value for date and time
+					installDate.setValue(LocalDate.now());
+					lblIST.setText(AppUtility.convertASTtoIST(LocalDateTime.now())
+							.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)) + "  ( IST )");
+				}
+			}
+		});
+
+		// Hour ComboBox ChangeListener
+		cmbHour.valueProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				try {
+					LocalDate ld = installDate.getValue();
+					int hh = new Integer(newValue).intValue();
+					int mm = new Integer(cmbMin.getValue()).intValue();
+					LocalTime lt = LocalTime.of(hh, mm);
+					LocalDateTime ldt = LocalDateTime.of(ld, lt);
+					lblIST.setText(AppUtility.convertASTtoIST(ldt).format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))
+							+ "  ( IST )");
+				} catch (Exception e) {
+					// Set the default value for date and time
+					installDate.setValue(LocalDate.now());
+					lblIST.setText(AppUtility.convertASTtoIST(LocalDateTime.now())
+							.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)) + "  ( IST )");
+				}
+			}
+		});
+
+		// Minute ComboBox ChangeListener
+		cmbMin.valueProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				try {
+					LocalDate ld = installDate.getValue();
+					int mm = new Integer(newValue).intValue();
+					int hh = new Integer(cmbHour.getValue()).intValue();
+					LocalTime lt = LocalTime.of(hh, mm);
+					LocalDateTime ldt = LocalDateTime.of(ld, lt);
+					lblIST.setText(AppUtility.convertASTtoIST(ldt).format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))
+							+ "  ( IST )");
+				} catch (Exception e) {
+					// Set the default value for date and time
+					installDate.setValue(LocalDate.now());
+					lblIST.setText(AppUtility.convertASTtoIST(LocalDateTime.now())
+							.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)) + "  ( IST )");
+				}
+			}
+		});
 
 		// Populate the Hours and Min's in the Hour and Min comboBoxes
 		String idx = null;
@@ -261,49 +331,6 @@ public class AppConfigController implements Initializable {
 
 		cmbHour.getSelectionModel().select(2);
 		cmbMin.getSelectionModel().select(0);
-
-		// ChangeListeners for Date and Time
-		// DatePicker ChangeListener
-		installDate.valueProperty().addListener(new ChangeListener<LocalDate>() {
-			@Override
-			public void changed(ObservableValue<? extends LocalDate> observable, LocalDate oldValue,
-					LocalDate newValue) {
-				int hh = new Integer(cmbHour.getValue()).intValue();
-				int mm = new Integer(cmbMin.getValue()).intValue();
-				LocalTime lt = LocalTime.of(hh, mm);
-				LocalDateTime ldt = LocalDateTime.of(newValue, lt);
-				lblIST.setText(AppUtility.convertASTtoIST(ldt).format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))
-						+ "  ( IST )");
-			}
-		});
-
-		// Hour ComboBox ChangeListener
-		cmbHour.valueProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				LocalDate ld = installDate.getValue();
-				int hh = new Integer(newValue).intValue();
-				int mm = new Integer(cmbMin.getValue()).intValue();
-				LocalTime lt = LocalTime.of(hh, mm);
-				LocalDateTime ldt = LocalDateTime.of(ld, lt);
-				lblIST.setText(AppUtility.convertASTtoIST(ldt).format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))
-						+ "  ( IST )");
-			}
-		});
-
-		// Minute ComboBox ChangeListener
-		cmbMin.valueProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				LocalDate ld = installDate.getValue();
-				int mm = new Integer(newValue).intValue();
-				int hh = new Integer(cmbHour.getValue()).intValue();
-				LocalTime lt = LocalTime.of(hh, mm);
-				LocalDateTime ldt = LocalDateTime.of(ld, lt);
-				lblIST.setText(AppUtility.convertASTtoIST(ldt).format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))
-						+ "  ( IST )");
-			}
-		});
 	}
 
 	/**
@@ -314,12 +341,12 @@ public class AppConfigController implements Initializable {
 	 * Note - This should be the 1st procedure to call in initialize procedure.
 	 */
 	private void populateFromSession() {
-		// Populate the default values from session
-		txtProd.setText(session.getProdSys());
-		txtDR.setText(session.getDrSys());
-		cmbDevSys.getItems().clear();
-		cmbDevSys.getItems().addAll(session.getDevSys());
-		cmbDevSys.getSelectionModel().select(0);		
+		appInfo = session.getAppInfo();
+		installConfig = session.getInstallConfig();
+		
+		txtProd.setText(installConfig.getProdSys());
+		txtDR.setText(installConfig.getDrSys());
+		txtDev.setText(installConfig.getDevSys());
 	}
 
 	/**
@@ -328,7 +355,7 @@ public class AppConfigController implements Initializable {
 	private void rollFileTableInit() {
 		colRollFileName.setCellValueFactory(cellData -> cellData.getValue().fileProperty());
 		colRollFileProd.setCellValueFactory(cellData -> cellData.getValue().prodProperty().asObject());
-		
+
 		rollFiles = session.getInstallConfig().getRollFiles();
 		filteredRollFiles = new FilteredList<>(rollFiles, p -> true);
 		txtRollFileSearch.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -355,7 +382,7 @@ public class AppConfigController implements Initializable {
 			TableRow<RollFile> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
-					RollFile rowObj = row.getItem();
+					//RollFile rowObj = row.getItem();
 					// showObjectEditWindow(rowObj);
 				}
 			});
@@ -382,7 +409,7 @@ public class AppConfigController implements Initializable {
 			stage.setScene(new Scene(root));
 			stage.setTitle("Edit Object");
 			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.initOwner(session.getPrimaryStage());
+			stage.initOwner(appInfo.getParentStage());
 			stage.getIcons().add(new Image("file:resources/images/edit.png"));
 			stage.setResizable(false);
 			stage.showAndWait();
@@ -391,7 +418,7 @@ public class AppConfigController implements Initializable {
 		}
 	}
 
-	private void showRollFileEditWindow(RollFile rFile) {
+	//private void showRollFileEditWindow(RollFile rFile) {
 		// try {
 		// Stage stage = new Stage();
 		// FXMLLoader loader = new
@@ -408,7 +435,7 @@ public class AppConfigController implements Initializable {
 		// } catch (Exception e) {
 		// e.printStackTrace();
 		// }
-	}
+	//}
 
 	@FXML
 	public void handelAdd(ActionEvent event) {
@@ -421,7 +448,7 @@ public class AppConfigController implements Initializable {
 				stage.setScene(new Scene(root));
 				stage.setTitle("Add New Objects");
 				stage.initModality(Modality.APPLICATION_MODAL);
-				stage.initOwner(session.getPrimaryStage());
+				stage.initOwner(appInfo.getParentStage());
 				stage.getIcons().add(new Image("file:resources/images/add.png"));
 				stage.setResizable(false);
 				stage.showAndWait();
@@ -437,7 +464,7 @@ public class AppConfigController implements Initializable {
 				stage.setScene(new Scene(root));
 				stage.setTitle("Add New RollFiles");
 				stage.initModality(Modality.APPLICATION_MODAL);
-				stage.initOwner(session.getPrimaryStage());
+				stage.initOwner(appInfo.getParentStage());
 				stage.getIcons().add(new Image("file:resources/images/add.png"));
 				stage.setResizable(false);
 				stage.showAndWait();
@@ -478,14 +505,14 @@ public class AppConfigController implements Initializable {
 			stage.close();
 		}
 	}
-	
+
 	@FXML
-	public void handleClear(ActionEvent event){
-		if (event.getSource() == btnObjClear){
+	public void handleClear(ActionEvent event) {
+		if (event.getSource() == btnObjClear) {
 			objects.clear();
 			tblInstallObjects.getItems().clear();
-			
-		} else if (event.getSource() == btnRollFileClear){
+
+		} else if (event.getSource() == btnRollFileClear) {
 			rollFiles.clear();
 			sortedRollFiles.clear();
 			tblRollFiles.getItems().clear();

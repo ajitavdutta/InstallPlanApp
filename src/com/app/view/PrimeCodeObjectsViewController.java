@@ -8,9 +8,12 @@ import java.util.ResourceBundle;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
+import com.app.models.ApplicationInfo;
 import com.app.models.PrimeCodeObjects;
 import com.app.models.Session;
 import com.app.models.TandemObject;
+import com.app.util.AppUtility;
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Appinfo;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -108,9 +111,9 @@ public class PrimeCodeObjectsViewController implements Initializable {
 	private SortedList<TandemObject> sortedObjects;
 	private FilteredList<TandemObject> filteredObjects;
 	private TandemObject selectedObject = null;
-	private Session session_data;
-	
-	
+	private Session session;
+	private ApplicationInfo appInfo;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		objects = FXCollections.observableArrayList();
@@ -121,35 +124,35 @@ public class PrimeCodeObjectsViewController implements Initializable {
 		colLive.setCellValueFactory(cellData -> cellData.getValue().liveProperty().asString());
 
 		txtName.textProperty().addListener((observable, oldValue, newValue) -> {
-		    if ( selectedObject != null ){
-		    	updateButtonStatus();
-		    }
+			if (selectedObject != null) {
+				updateButtonStatus();
+			}
 		});
-		
+
 		txtLocation.textProperty().addListener((observable, oldValue, newValue) -> {
-		    if ( selectedObject != null ){
-		    	updateButtonStatus();
-		    }
+			if (selectedObject != null) {
+				updateButtonStatus();
+			}
 		});
-		
+
 		rbtnRel5.selectedProperty().addListener((observable, oldValue, newValue) -> {
-		    if ( selectedObject != null ){
-		    	updateButtonStatus();
-		    }
+			if (selectedObject != null) {
+				updateButtonStatus();
+			}
 		});
-		
+
 		rbtnRel6.selectedProperty().addListener((observable, oldValue, newValue) -> {
-		    if ( selectedObject != null ){
-		    	updateButtonStatus();
-		    }
+			if (selectedObject != null) {
+				updateButtonStatus();
+			}
 		});
-		
+
 		chkLive.selectedProperty().addListener((observable, oldValue, newValue) -> {
-		    if ( selectedObject != null ){
-		    	updateButtonStatus();
-		    }
+			if (selectedObject != null) {
+				updateButtonStatus();
+			}
 		});
-		
+
 		txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
 			filterTable();
 		});
@@ -187,17 +190,17 @@ public class PrimeCodeObjectsViewController implements Initializable {
 			public void changed(ObservableValue<? extends TandemObject> observable, TandemObject oldValue,
 					TandemObject newValue) {
 				if (tblPrimeCodeList.getSelectionModel().getSelectedItem() != null) {
-					if ( !btnUpdate.isDisabled()){
-						// TODO 
+					if (!btnUpdate.isDisabled()) {
+						// TODO
 						saveObjectUpdate(true);
 					}
-					
+
 					selectedObject = tblPrimeCodeList.getSelectionModel().getSelectedItem();
 					showObjectDetail(newValue);
 				}
 			}
 		});
-		
+
 		btnAdd.setDisable(true);
 		btnUpdate.setDisable(true);
 		txtName.setEditable(false);
@@ -207,27 +210,29 @@ public class PrimeCodeObjectsViewController implements Initializable {
 		chkLive.setDisable(true);
 
 		rbBtnGrp = new ToggleGroup();
-		
+
 		rbtnRel5.setToggleGroup(rbBtnGrp);
 		rbtnRel6.setToggleGroup(rbBtnGrp);
-		//loadData();
+		// loadData();
 	}
+
 	/**
 	 * Save the changes made to the object details to the SortedList.
 	 * 
-	 * @param reqConf - Required confirmation flag.
+	 * @param reqConf
+	 *            - Required confirmation flag.
 	 */
-	private void saveObjectUpdate(boolean reqConf){
-		if (reqConf){
+	private void saveObjectUpdate(boolean reqConf) {
+		if (reqConf) {
 			Alert alert = new Alert(AlertType.CONFIRMATION);
-			//alert.initOwner(tblPrimeCodeList.getParent().getScene().getWindow());
-			alert.initOwner(session_data.getPrimaryStage());
+			// alert.initOwner(tblPrimeCodeList.getParent().getScene().getWindow());
+			alert.initOwner(appInfo.getParentStage());
 			alert.setTitle("Update Confirmation");
-			alert.setHeaderText( "The Object details have been modified.");
+			alert.setHeaderText("The Object details have been modified.");
 			alert.setContentText("Do you want to save the changes made to the Object?");
-			
-			Optional<ButtonType>result = alert.showAndWait();
-			if ( result.get() == ButtonType.CANCEL){
+
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() == ButtonType.CANCEL) {
 				btnAdd.setDisable(true);
 				btnUpdate.setDisable(true);
 				txtName.setEditable(false);
@@ -238,14 +243,14 @@ public class PrimeCodeObjectsViewController implements Initializable {
 				return;
 			}
 		}
-		
+
 		selectedObject.setName(txtName.getText());
 		selectedObject.setLocation(txtLocation.getText());
 		selectedObject.setLive(chkLive.isSelected());
 		int version = 0;
-		if ( rbtnRel5.isSelected() ){
+		if (rbtnRel5.isSelected()) {
 			version = 5;
-		}else{
+		} else {
 			version = 6;
 		}
 		selectedObject.setVersion(version);
@@ -257,8 +262,8 @@ public class PrimeCodeObjectsViewController implements Initializable {
 		rbtnRel6.setDisable(true);
 		chkLive.setDisable(true);
 	}
-	
-	private void filterTable(){
+
+	private void filterTable() {
 		filteredObjects.setPredicate(obj -> {
 
 			// Release 5
@@ -279,8 +284,8 @@ public class PrimeCodeObjectsViewController implements Initializable {
 			// Filter text
 			if (txtFilter.getText().trim().length() > 0) {
 				String lowerCaseFilter = txtFilter.getText().trim().toLowerCase();
-				if ( obj.getName().toLowerCase().contains(lowerCaseFilter) ||
-					 obj.getLocation().toLowerCase().contains(lowerCaseFilter) ) {
+				if (obj.getName().toLowerCase().contains(lowerCaseFilter)
+						|| obj.getLocation().toLowerCase().contains(lowerCaseFilter)) {
 					// The object contains the specified text so display
 					// in the Table.
 				} else {
@@ -290,28 +295,28 @@ public class PrimeCodeObjectsViewController implements Initializable {
 			return true;
 		});
 	}
-	
-	private void updateButtonStatus(){
+
+	private void updateButtonStatus() {
 		boolean disabled = true;
-    	if ( !selectedObject.getName().equalsIgnoreCase(txtName.getText()) ){
-	    	disabled = false;
-	    }
-    	
-    	if ( !txtLocation.getText().equalsIgnoreCase(selectedObject.getLocation())){
-    		disabled = false;
-    	}
-    	
-    	if ( (selectedObject.getLive() && !chkLive.isSelected()) ||
-    		 (!selectedObject.getLive() && chkLive.isSelected())){
-    		disabled = false;
-    	}
-    	
-    	if ( (selectedObject.getVersion() == 5 && rbtnRel6.isSelected()) ||
-    		 (selectedObject.getVersion() == 6 && rbtnRel5.isSelected())){
-    		disabled = false;
-    	}
-    	
-    	btnUpdate.setDisable(disabled);
+		if (!selectedObject.getName().equalsIgnoreCase(txtName.getText())) {
+			disabled = false;
+		}
+
+		if (!txtLocation.getText().equalsIgnoreCase(selectedObject.getLocation())) {
+			disabled = false;
+		}
+
+		if ((selectedObject.getLive() && !chkLive.isSelected())
+				|| (!selectedObject.getLive() && chkLive.isSelected())) {
+			disabled = false;
+		}
+
+		if ((selectedObject.getVersion() == 5 && rbtnRel6.isSelected())
+				|| (selectedObject.getVersion() == 6 && rbtnRel5.isSelected())) {
+			disabled = false;
+		}
+
+		btnUpdate.setDisable(disabled);
 	}
 
 	public void showObjectDetail(TandemObject data) {
@@ -336,33 +341,15 @@ public class PrimeCodeObjectsViewController implements Initializable {
 
 	public void loadData() {
 		try {
-			//File xmlFile = new File("data/xml/PrimeCodeData.xml");
-			File xmlFile = new File(session_data.getXmlPrimeCodeFile());
-			if (xmlFile.exists()) {
-				loadObjectsFromFile(xmlFile);
-				if (objects != null) {
-					// tblPrimeCodeList.setItems(objects);
-					filteredObjects = new FilteredList<>(objects, p -> true);
-					sortedObjects = new SortedList<>(filteredObjects);
-					sortedObjects.comparatorProperty().bind(tblPrimeCodeList.comparatorProperty());
-					tblPrimeCodeList.setItems(sortedObjects);
-				}
-			} else {
-				System.out.println("File is not present.");
+			objects = AppUtility.loadPrimeCodeDB(appInfo.getPCXmlFile());
+			if (objects != null) {
+				filteredObjects = new FilteredList<>(objects, p -> true);
+				sortedObjects = new SortedList<>(filteredObjects);
+				sortedObjects.comparatorProperty().bind(tblPrimeCodeList.comparatorProperty());
+				tblPrimeCodeList.setItems(sortedObjects);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
-	public void loadObjectsFromFile(File file) {
-		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(PrimeCodeObjects.class);
-			Unmarshaller unMarshaller = jaxbContext.createUnmarshaller();
-			PrimeCodeObjects objs = (PrimeCodeObjects) unMarshaller.unmarshal(file);
-			objects = objs.getObjects();
 		} catch (Exception e) {
-			// File is empty so return a null
 			e.printStackTrace();
 		}
 	}
@@ -376,47 +363,48 @@ public class PrimeCodeObjectsViewController implements Initializable {
 			rbtnRel6.setDisable(false);
 			chkLive.setDisable(false);
 			txtName.requestFocus();
-			//btnUpdate.setDisable(false);
+			// btnUpdate.setDisable(false);
 		}
 	}
-	
+
 	@FXML
-	private void handleUpdate(Event event){
+	private void handleUpdate(Event event) {
 		saveObjectUpdate(false);
 	}
-	
+
 	@FXML
-	public void deleteObject(Event event){
+	public void deleteObject(Event event) {
 		int selectedIndex = tblPrimeCodeList.getSelectionModel().getSelectedIndex();
-		if ( selectedIndex >= 0){
+		if (selectedIndex >= 0) {
 			Alert alert = new Alert(AlertType.CONFIRMATION);
 			alert.initOwner(tblPrimeCodeList.getParent().getScene().getWindow());
 			alert.setTitle("Delete Object Confirmation");
-			alert.setHeaderText( "This action will delete the object \n" + 
-								 tblPrimeCodeList.getItems().get(selectedIndex).getLocation() + 
-			                     tblPrimeCodeList.getItems().get(selectedIndex).getName() +
-			                     "\n form the PrimeCode Object List.");
+			alert.setHeaderText("This action will delete the object \n"
+					+ tblPrimeCodeList.getItems().get(selectedIndex).getLocation()
+					+ tblPrimeCodeList.getItems().get(selectedIndex).getName() + "\n form the PrimeCode Object List.");
 			alert.setContentText("Do you really want to delete the object?");
-			Optional<ButtonType>result = alert.showAndWait();
-			if ( result.get() == ButtonType.OK){
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() == ButtonType.OK) {
 				try {
 					ObservableList<TandemObject> list = FXCollections.observableArrayList(tblPrimeCodeList.getItems());
 					list.remove(tblPrimeCodeList.getItems().get(selectedIndex));
 					sortedObjects = new SortedList<>(list);
 					tblPrimeCodeList.getItems().clear();
 					tblPrimeCodeList.setItems(sortedObjects);
-					//tblPrimeCodeList.getItems().remove(selectedObject);
-					//sortedObjects.remove(tblPrimeCodeList.getItems().get(selectedIndex));
+					// tblPrimeCodeList.getItems().remove(selectedObject);
+					// sortedObjects.remove(tblPrimeCodeList.getItems().get(selectedIndex));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
 	}
+
 	public Session getSession_data() {
-		return session_data;
+		return session;
 	}
-	public void setSession_data(Session session_data) {
-		this.session_data = session_data;
+
+	public void setSession_data(Session session) {
+		this.session = session;
 	}
 }

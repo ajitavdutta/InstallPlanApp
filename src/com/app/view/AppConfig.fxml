@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="900.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.view.AppConfigController">
+<AnchorPane prefHeight="900.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.view.AppConfigController">
    <children>
       <BorderPane prefHeight="227.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <top>
@@ -37,7 +37,7 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="txtNum" />
+                                                <TextField fx:id="txtNum" promptText="SDM Number" />
                                                 <Label text="Date and Time">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
@@ -77,7 +77,7 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="txtDescr" prefHeight="25.0" HBox.hgrow="ALWAYS">
+                                                <TextField fx:id="txtDescr" prefHeight="25.0" promptText="SDM Description" HBox.hgrow="ALWAYS">
                                                    <HBox.margin>
                                                       <Insets />
                                                    </HBox.margin>
@@ -94,7 +94,7 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="txtWR" prefHeight="25.0" HBox.hgrow="ALWAYS">
+                                                <TextField fx:id="txtWR" prefHeight="25.0" promptText="Work Request Description" HBox.hgrow="ALWAYS">
                                                    <HBox.margin>
                                                       <Insets />
                                                    </HBox.margin>
@@ -111,7 +111,7 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="txtPrimeCode" prefHeight="25.0" prefWidth="151.0" />
+                                                <TextField fx:id="txtPrimeCode" prefHeight="25.0" prefWidth="151.0" promptText="PrimeCode Reference" />
                                                 <Label text="Prod Sys">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
@@ -129,7 +129,7 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <ComboBox fx:id="cmbDevSys" maxWidth="1.7976931348623157E308" promptText="-- Select --" />
+                                                <TextField fx:id="txtDev" prefHeight="25.0" prefWidth="59.0" />
                                              </children>
                                              <padding>
                                                 <Insets left="30.0" />
@@ -142,13 +142,13 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="txtDesigner" prefHeight="25.0" prefWidth="281.0" />
+                                                <TextField fx:id="txtDesigner" prefHeight="25.0" prefWidth="281.0" promptText="Project Designer" />
                                                 <Label text="Release Manager       ">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="txtRM" prefHeight="25.0" prefWidth="281.0" />
+                                                <TextField fx:id="txtRM" prefHeight="25.0" prefWidth="281.0" promptText="Project RM Name" />
                                              </children>
                                              <padding>
                                                 <Insets left="30.0" />

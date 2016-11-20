@@ -7,6 +7,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import com.app.models.ApplicationInfo;
+import com.app.models.InstallConfig;
+import com.app.models.PrimeCodeObjects;
 import com.app.models.Session;
 import com.app.models.TandemObject;
 import com.app.util.AppUtility;
@@ -21,6 +24,10 @@ import javafx.stage.Stage;
 public class ObjectAddViewController implements Initializable {
 
 	private Session session;
+	private ApplicationInfo appInfo;
+	private InstallConfig installConfig;
+	private PrimeCodeObjects primeCodeObjects;
+	
 	private File outFile;
 	private BufferedWriter writer;
 
@@ -37,12 +44,18 @@ public class ObjectAddViewController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		try {
-			outFile = new File(session.getFupCommandFile());
-			outFile.getParentFile().mkdirs();
-			if (!outFile.exists()) {
-				outFile.createNewFile();
+			primeCodeObjects = new PrimeCodeObjects();
+			appInfo = session.getAppInfo();
+			installConfig = session.getInstallConfig();
+			primeCodeObjects.setObjects(AppUtility.loadPrimeCodeDB(appInfo.getPCXmlFile()));
+			if (installConfig.getFUPCmdFile() != null && installConfig.getFUPCmdFile().length() > 0){
+				outFile = new File(installConfig.getFUPCmdFile());
+				outFile.getParentFile().mkdirs();
+				if (!outFile.exists()) {
+					outFile.createNewFile();
+				}
+				writer = new BufferedWriter(new FileWriter(outFile, true));
 			}
-			writer = new BufferedWriter(new FileWriter(outFile, true));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -64,17 +77,17 @@ public class ObjectAddViewController implements Initializable {
 		for (String obj : objects) {
 			obj = obj.toUpperCase();
 			if (AppUtility.isValidTandemFileName(obj) > 0) {
-				TandemObject primeCodeObject = AppUtility.searchObject(session.getPrimeCodeObjects(),
+				TandemObject primeCodeObject = AppUtility.searchObject(primeCodeObjects.getObjects(),
 						AppUtility.getFileName(obj),
 						new Integer(AppUtility.getSubVolume(obj).substring(1, 2)).intValue());
 				if (primeCodeObject != null) {
 					// Object found in the PrimeCode list
 					// Add the to the table.
-					session.getInstallConfig().getInstallObjects().add(new TandemObject(AppUtility.getFileName(obj),
+					session.getInstallConfig().getObjects().add(new TandemObject(AppUtility.getFileName(obj),
 							primeCodeObject.getVersion(), primeCodeObject.getLocation(), primeCodeObject.getLive()));
 					if (primeCodeObject.getLive()) {
-						fupCommands.add("FUP INFO " + session.getDevSys().get(0) + "." + obj + ","
-								+ session.getProdSys() + ".$DATA01." + AppUtility.getSubVolume(obj) + ".*, SOURCEDATE");
+						fupCommands.add("FUP INFO " + installConfig.getDevSys() + "." + obj + ","
+								+ installConfig.getProdSys() + ".$DATA01." + AppUtility.getSubVolume(obj) + ".*, SOURCEDATE");
 					}
 				}
 
@@ -120,8 +133,10 @@ public class ObjectAddViewController implements Initializable {
 
 	private void closeWindow(Stage stage) {
 		try {
-			writer.flush();
-			writer.close();
+			if ( writer != null){
+				writer.flush();
+				writer.close();
+			}
 			stage.close();
 		} catch (Exception e) {
 			e.printStackTrace();
