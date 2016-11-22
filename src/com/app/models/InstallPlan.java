@@ -23,8 +23,6 @@ public class InstallPlan {
 	private ObservableList<RollFile> rollFileList;
 	private ObservableList<TandemObject> objList;
 
-	
-
 	public InstallPlan() {
 		sdmNumber = new SimpleStringProperty();
 		installDate = new SimpleStringProperty();

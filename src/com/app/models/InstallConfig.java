@@ -3,7 +3,11 @@ package com.app.models;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
+/**
+ * 
+ * @author Ajitav
+ *
+ */
 public class InstallConfig {
 	private SimpleStringProperty number;
 	private SimpleStringProperty primeCodeRef;

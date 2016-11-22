@@ -40,7 +40,7 @@ public class ObjectEditViewController implements Initializable {
 	private Button btnUpdate;
 
 	public ObjectEditViewController(Session session, TandemObject selObject) {
-		this.session = session;
+		this.setSession(session);
 		this.selObject = selObject;
 
 	}
@@ -95,6 +95,14 @@ public class ObjectEditViewController implements Initializable {
 	public void handelCancel(ActionEvent event) {
 		Stage stage = (Stage) btnCancel.getScene().getWindow();
 		stage.close();
+	}
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
 	}
 
 }
