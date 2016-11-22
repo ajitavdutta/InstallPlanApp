@@ -46,13 +46,13 @@
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
-			<fileset dir="/Users/Ajitav/git/InstallPlanApp/lib/controlsfx-8.40.11">
+			<fileset dir="/Users/Ajitav/git/InstallPlanApp/lib/controlsfx">
 				<filename name="fxsampler-1.0.9.jar"/>
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
-			<fileset dir="/Users/Ajitav/git/InstallPlanApp/lib/controlsfx-8.40.11">
-				<filename name="controlsfx-8.40.11.jar"/>
+			<fileset dir="/Users/Ajitav/git/InstallPlanApp/lib/controlsfx">
+				<filename name="controlsfx-8.40.12.jar"/>
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">

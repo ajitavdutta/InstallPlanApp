@@ -1,15 +1,13 @@
 package com.app.view;
 
-import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-
-import com.app.test.model.ObjectModel;
-import com.app.test.model.PrimeCodeObjectModel;
+import com.app.models.ApplicationInfo;
+import com.app.models.Session;
+import com.app.models.TandemObject;
+import com.app.util.AppUtility;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -78,19 +76,19 @@ public class PrimeCodeObjectsViewController implements Initializable {
 	private Button btnCancel;
 
 	@FXML
-	private TableView<ObjectModel> tblPrimeCodeList;
+	private TableView<TandemObject> tblPrimeCodeList;
 
 	@FXML
-	private TableColumn<ObjectModel, String> colName;
+	private TableColumn<TandemObject, String> colName;
 
 	@FXML
-	private TableColumn<ObjectModel, String> colLocation;
+	private TableColumn<TandemObject, String> colLocation;
 
 	@FXML
-	private TableColumn<ObjectModel, Integer> colVersion;
+	private TableColumn<TandemObject, Integer> colVersion;
 
 	@FXML
-	private TableColumn<ObjectModel, String> colLive;
+	private TableColumn<TandemObject, String> colLive;
 
 	@FXML
 	private CheckBox chkRel5;
@@ -103,11 +101,13 @@ public class PrimeCodeObjectsViewController implements Initializable {
 
 	private ToggleGroup rbBtnGrp;
 
-	private ObservableList<ObjectModel> objects;
-	private SortedList<ObjectModel> sortedObjects;
-	private FilteredList<ObjectModel> filteredObjects;
-	private ObjectModel selectedObject = null;
-	
+	private ObservableList<TandemObject> objects;
+	private SortedList<TandemObject> sortedObjects;
+	private FilteredList<TandemObject> filteredObjects;
+	private TandemObject selectedObject = null;
+	private Session session;
+	private ApplicationInfo appInfo;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		objects = FXCollections.observableArrayList();
@@ -117,8 +117,83 @@ public class PrimeCodeObjectsViewController implements Initializable {
 		colVersion.setCellValueFactory(cellData -> cellData.getValue().versionProperty().asObject());
 		colLive.setCellValueFactory(cellData -> cellData.getValue().liveProperty().asString());
 
-		tblPrimeCodeList.getSelectionModel().selectedItemProperty()
-				.addListener((observable, oldValue, newValue) -> showObjectDetail(newValue));
+		txtName.textProperty().addListener((observable, oldValue, newValue) -> {
+			if (selectedObject != null) {
+				updateButtonStatus();
+			}
+		});
+
+		txtLocation.textProperty().addListener((observable, oldValue, newValue) -> {
+			if (selectedObject != null) {
+				updateButtonStatus();
+			}
+		});
+
+		rbtnRel5.selectedProperty().addListener((observable, oldValue, newValue) -> {
+			if (selectedObject != null) {
+				updateButtonStatus();
+			}
+		});
+
+		rbtnRel6.selectedProperty().addListener((observable, oldValue, newValue) -> {
+			if (selectedObject != null) {
+				updateButtonStatus();
+			}
+		});
+
+		chkLive.selectedProperty().addListener((observable, oldValue, newValue) -> {
+			if (selectedObject != null) {
+				updateButtonStatus();
+			}
+		});
+
+		txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+			filterTable();
+		});
+
+		chkRel5.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				filterTable();
+				sortedObjects = new SortedList<>(filteredObjects);
+			}
+		});
+
+		chkRel6.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				filterTable();
+				sortedObjects = new SortedList<>(filteredObjects);
+			}
+		});
+
+		chkLiveObj.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				filterTable();
+				sortedObjects = new SortedList<>(filteredObjects);
+			}
+		});
+
+		tblPrimeCodeList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TandemObject>() {
+
+			@Override
+			public void changed(ObservableValue<? extends TandemObject> observable, TandemObject oldValue,
+					TandemObject newValue) {
+				if (tblPrimeCodeList.getSelectionModel().getSelectedItem() != null) {
+					if (!btnUpdate.isDisabled()) {
+						// TODO
+						saveObjectUpdate(true);
+					}
+
+					selectedObject = tblPrimeCodeList.getSelectionModel().getSelectedItem();
+					showObjectDetail(newValue);
+				}
+			}
+		});
 
 		btnAdd.setDisable(true);
 		btnUpdate.setDisable(true);
@@ -129,191 +204,116 @@ public class PrimeCodeObjectsViewController implements Initializable {
 		chkLive.setDisable(true);
 
 		rbBtnGrp = new ToggleGroup();
+
 		rbtnRel5.setToggleGroup(rbBtnGrp);
 		rbtnRel6.setToggleGroup(rbBtnGrp);
+		// loadData();
+	}
 
-		loadData();
+	/**
+	 * Save the changes made to the object details to the SortedList.
+	 * 
+	 * @param reqConf
+	 *            - Required confirmation flag.
+	 */
+	private void saveObjectUpdate(boolean reqConf) {
+		if (reqConf) {
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			// alert.initOwner(tblPrimeCodeList.getParent().getScene().getWindow());
+			alert.initOwner(appInfo.getParentStage());
+			alert.setTitle("Update Confirmation");
+			alert.setHeaderText("The Object details have been modified.");
+			alert.setContentText("Do you want to save the changes made to the Object?");
 
-		txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-			filteredObjects.setPredicate(obj -> {
-				/*
-				 * Check if Release 5 & 6 objects are to be displayed or not
-				 */
-				if (!chkRel5.isSelected() && !chkRel6.isSelected()) {
-					// No objects has to be displayed in the table;
-					return false;
-				}
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() == ButtonType.CANCEL) {
+				btnAdd.setDisable(true);
+				btnUpdate.setDisable(true);
+				txtName.setEditable(false);
+				txtLocation.setEditable(false);
+				rbtnRel5.setDisable(true);
+				rbtnRel6.setDisable(true);
+				chkLive.setDisable(true);
+				return;
+			}
+		}
 
-				if (newValue == null || newValue.isEmpty()) {
-					// There is no text to be searched.
-					// Do nothing so that it will display all the objects in the
-					// table.
+		selectedObject.setName(txtName.getText());
+		selectedObject.setLocation(txtLocation.getText());
+		selectedObject.setLive(chkLive.isSelected());
+		int version = 0;
+		if (rbtnRel5.isSelected()) {
+			version = 5;
+		} else {
+			version = 6;
+		}
+		selectedObject.setVersion(version);
+		btnAdd.setDisable(true);
+		btnUpdate.setDisable(true);
+		txtName.setEditable(false);
+		txtLocation.setEditable(false);
+		rbtnRel5.setDisable(true);
+		rbtnRel6.setDisable(true);
+		chkLive.setDisable(true);
+	}
+
+	private void filterTable() {
+		filteredObjects.setPredicate(obj -> {
+
+			// Release 5
+			if (!chkRel5.isSelected() && obj.getVersion() == 5) {
+				return false;
+			}
+
+			// Release 6
+			if (!chkRel6.isSelected() && obj.getVersion() == 6) {
+				return false;
+			}
+
+			// Live Object
+			if (chkLiveObj.isSelected() && !obj.getLive()) {
+				return false;
+			}
+
+			// Filter text
+			if (txtFilter.getText().trim().length() > 0) {
+				String lowerCaseFilter = txtFilter.getText().trim().toLowerCase();
+				if (obj.getName().toLowerCase().contains(lowerCaseFilter)
+						|| obj.getLocation().toLowerCase().contains(lowerCaseFilter)) {
+					// The object contains the specified text so display
+					// in the Table.
 				} else {
-					// Filter the data based on the text present in the textbox
-					String lowerCaseFilter = newValue.toLowerCase();
-					if (obj.getName().toLowerCase().contains(lowerCaseFilter)
-							|| obj.getLocation().toLowerCase().contains(lowerCaseFilter)) {
-						// The object contains the specified text so display in
-						// the Table.
-					} else {
-						return false;
-					}
-				}
-
-				// If we reach here that object name/location contains the filter text.
-				// Check if it satisfy the other filters.
-
-				// Live Object
-				if (chkLiveObj.isSelected() && !obj.getLive()) {
 					return false;
 				}
-
-				// Release 5 Object
-				if (!chkRel5.isSelected() && obj.getVersion() == 5) {
-					return false;
-				}
-
-				// Release 6 Object
-				if (!chkRel6.isSelected() && obj.getVersion() == 6) {
-					return false;
-				}
-
-				return true;
-			});
-		});
-
-		chkRel5.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				filteredObjects.setPredicate(obj -> {
-
-					// Release 5
-					if (!chkRel5.isSelected() && obj.getVersion() == 5) {
-						return false;
-					}
-
-					// Release 6
-					if (!chkRel6.isSelected() && obj.getVersion() == 6) {
-						return false;
-					}
-
-					// Live Object
-					if (chkLiveObj.isSelected() && !obj.getLive()) {
-						return false;
-					}
-
-					// Filter text
-					if (txtFilter.getText().trim().length() > 0) {
-						String lowerCaseFilter = txtFilter.getText().trim().toLowerCase();
-						if (obj.getName().toLowerCase().contains(lowerCaseFilter)
-								|| obj.getLocation().toLowerCase().contains(lowerCaseFilter)) {
-							// The object contains the specified text so display
-							// in the Table.
-						} else {
-							return false;
-						}
-					}
-					return true;
-				});
-
-				sortedObjects = new SortedList<>(filteredObjects);
 			}
-		});
-
-		chkRel6.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				filteredObjects.setPredicate(obj -> {
-
-					// Release 5
-					if (!chkRel5.isSelected() && obj.getVersion() == 5) {
-						return false;
-					}
-
-					// Release 6
-					if (!chkRel6.isSelected() && obj.getVersion() == 6) {
-						return false;
-					}
-
-					// Live Object
-					if (chkLiveObj.isSelected() && !obj.getLive()) {
-						return false;
-					}
-
-					// Filter text
-					if (txtFilter.getText().trim().length() > 0) {
-						String lowerCaseFilter = txtFilter.getText().trim().toLowerCase();
-						if (obj.getName().toLowerCase().contains(lowerCaseFilter)
-								|| obj.getLocation().toLowerCase().contains(lowerCaseFilter)) {
-							// The object contains the specified text so display
-							// in the Table.
-						} else {
-							return false;
-						}
-					}
-					return true;
-				});
-
-				sortedObjects = new SortedList<>(filteredObjects);
-			}
-		});
-
-		chkLiveObj.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				filteredObjects.setPredicate(obj -> {
-
-					// Release 5
-					if (!chkRel5.isSelected() && obj.getVersion() == 5) {
-						return false;
-					}
-
-					// Release 6
-					if (!chkRel6.isSelected() && obj.getVersion() == 6) {
-						return false;
-					}
-
-					// Live Object
-					if (chkLiveObj.isSelected() && !obj.getLive()) {
-						return false;
-					}
-
-					// Filter text
-					if (txtFilter.getText().trim().length() > 0) {
-						String lowerCaseFilter = txtFilter.getText().trim().toLowerCase();
-						if (obj.getName().toLowerCase().contains(lowerCaseFilter)
-								|| obj.getLocation().toLowerCase().contains(lowerCaseFilter)) {
-							// The object contains the specified text so display
-							// in the Table.
-						} else {
-							return false;
-						}
-					}
-					return true;
-				});
-
-				sortedObjects = new SortedList<>(filteredObjects);
-			}
-		});
-
-		tblPrimeCodeList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ObjectModel>() {
-
-			@Override
-			public void changed(ObservableValue<? extends ObjectModel> observable, ObjectModel oldValue,
-					ObjectModel newValue) {
-				if (tblPrimeCodeList.getSelectionModel().getSelectedItem() != null) {
-					selectedObject = tblPrimeCodeList.getSelectionModel().getSelectedItem();
-					// System.out.println(selectedObject.getName());
-				}
-
-			}
+			return true;
 		});
 	}
 
-	public void showObjectDetail(ObjectModel data) {
+	private void updateButtonStatus() {
+		boolean disabled = true;
+		if (!selectedObject.getName().equalsIgnoreCase(txtName.getText())) {
+			disabled = false;
+		}
+
+		if (!txtLocation.getText().equalsIgnoreCase(selectedObject.getLocation())) {
+			disabled = false;
+		}
+
+		if ((selectedObject.getLive() && !chkLive.isSelected())
+				|| (!selectedObject.getLive() && chkLive.isSelected())) {
+			disabled = false;
+		}
+
+		if ((selectedObject.getVersion() == 5 && rbtnRel6.isSelected())
+				|| (selectedObject.getVersion() == 6 && rbtnRel5.isSelected())) {
+			disabled = false;
+		}
+
+		btnUpdate.setDisable(disabled);
+	}
+
+	public void showObjectDetail(TandemObject data) {
 		if (data == null) {
 			txtName.clear();
 			txtLocation.clear();
@@ -335,32 +335,15 @@ public class PrimeCodeObjectsViewController implements Initializable {
 
 	public void loadData() {
 		try {
-			File xmlFile = new File("resources/xml/PrimeCodeData.xml");
-			if (xmlFile.exists()) {
-				loadObjectsFromFile(xmlFile);
-				if (objects != null) {
-					// tblPrimeCodeList.setItems(objects);
-					filteredObjects = new FilteredList<>(objects, p -> true);
-					sortedObjects = new SortedList<>(filteredObjects);
-					sortedObjects.comparatorProperty().bind(tblPrimeCodeList.comparatorProperty());
-					tblPrimeCodeList.setItems(sortedObjects);
-				}
-			} else {
-				System.out.println("File is not present.");
+			objects = AppUtility.loadPrimeCodeDB(appInfo.getPCXmlFile());
+			if (objects != null) {
+				filteredObjects = new FilteredList<>(objects, p -> true);
+				sortedObjects = new SortedList<>(filteredObjects);
+				sortedObjects.comparatorProperty().bind(tblPrimeCodeList.comparatorProperty());
+				tblPrimeCodeList.setItems(sortedObjects);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
-	public void loadObjectsFromFile(File file) {
-		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(PrimeCodeObjectModel.class);
-			Unmarshaller unMarshaller = jaxbContext.createUnmarshaller();
-			PrimeCodeObjectModel objs = (PrimeCodeObjectModel) unMarshaller.unmarshal(file);
-			objects = objs.getObjects();
 		} catch (Exception e) {
-			// File is empty so return a null
 			e.printStackTrace();
 		}
 	}
@@ -374,34 +357,48 @@ public class PrimeCodeObjectsViewController implements Initializable {
 			rbtnRel6.setDisable(false);
 			chkLive.setDisable(false);
 			txtName.requestFocus();
-			btnUpdate.setDisable(false);
+			// btnUpdate.setDisable(false);
 		}
 	}
-	
+
 	@FXML
-	public void deleteObject(Event event){
+	private void handleUpdate(Event event) {
+		saveObjectUpdate(false);
+	}
+
+	@FXML
+	public void deleteObject(Event event) {
 		int selectedIndex = tblPrimeCodeList.getSelectionModel().getSelectedIndex();
-		if ( selectedIndex >= 0){
+		if (selectedIndex >= 0) {
 			Alert alert = new Alert(AlertType.CONFIRMATION);
 			alert.initOwner(tblPrimeCodeList.getParent().getScene().getWindow());
 			alert.setTitle("Delete Object Confirmation");
-			alert.setHeaderText( "This action will delete the object \n" + 
-								 tblPrimeCodeList.getItems().get(selectedIndex).getLocation() + 
-			                     tblPrimeCodeList.getItems().get(selectedIndex).getName() +
-			                     "\n form the PrimeCode Object List.");
+			alert.setHeaderText("This action will delete the object \n"
+					+ tblPrimeCodeList.getItems().get(selectedIndex).getLocation()
+					+ tblPrimeCodeList.getItems().get(selectedIndex).getName() + "\n form the PrimeCode Object List.");
 			alert.setContentText("Do you really want to delete the object?");
-			Optional<ButtonType>result = alert.showAndWait();
-			if ( result.get() == ButtonType.OK){
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() == ButtonType.OK) {
 				try {
-					ObservableList<ObjectModel> list = FXCollections.observableArrayList(tblPrimeCodeList.getItems());
+					ObservableList<TandemObject> list = FXCollections.observableArrayList(tblPrimeCodeList.getItems());
 					list.remove(tblPrimeCodeList.getItems().get(selectedIndex));
 					sortedObjects = new SortedList<>(list);
-					//tblPrimeCodeList.getItems().remove(selectedObject);
-					//sortedObjects.remove(tblPrimeCodeList.getItems().get(selectedIndex));
+					tblPrimeCodeList.getItems().clear();
+					tblPrimeCodeList.setItems(sortedObjects);
+					// tblPrimeCodeList.getItems().remove(selectedObject);
+					// sortedObjects.remove(tblPrimeCodeList.getItems().get(selectedIndex));
 				} catch (Exception e) {
-					
+					e.printStackTrace();
 				}
 			}
 		}
+	}
+
+	public Session getSession_data() {
+		return session;
+	}
+
+	public void setSession_data(Session session) {
+		this.session = session;
 	}
 }

@@ -6,7 +6,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import com.app.test.model.PrimeCodeObjectModel;
+import com.app.models.PrimeCodeObjects;
 
 public class XMLUtils {
 	//private static final String XML_OUTPUT = "resources/xml/PrimeCodeData.xml";
@@ -23,9 +23,9 @@ public class XMLUtils {
 		}
 	}
 
-	public static void saveObjectListToFile(File file, PrimeCodeObjectModel objects) {
+	public static void saveObjectListToFile(File file, PrimeCodeObjects objects) {
 		try {
-			JAXBContext jabxContext = JAXBContext.newInstance(PrimeCodeObjectModel.class);
+			JAXBContext jabxContext = JAXBContext.newInstance(PrimeCodeObjects.class);
 			Marshaller marshaller = jabxContext.createMarshaller();
 
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);

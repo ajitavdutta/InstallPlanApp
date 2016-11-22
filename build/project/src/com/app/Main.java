@@ -1,56 +1,58 @@
 package com.app;
 
-import com.app.view.AppScreenController;
-import com.app.view.MainScreenController;
+import com.app.models.Session;
+import com.app.util.AppUtility;
+import com.app.view.SceneSelector;
 
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-public class Main extends Application { 
-	
+public class Main extends Application {
+
+	private Session session;
+
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			// Get the current monitor screen dimension
-			Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-
-			// Step 1 - Load the AnchorPane (Main Screen)
-			FXMLLoader loader = new FXMLLoader();
-			//loader.setLocation(Main.class.getResource("view/MainScreen.fxml"));
-			loader.setLocation(Main.class.getResource("view/AppScreen.fxml"));
-			AnchorPane root = (AnchorPane) loader.load();
-			//MainScreenController controller = loader.getController();
-			AppScreenController controller = loader.getController();
-
-			// Step 2 - Setup the scene and add default style CSS
-			Scene scene = new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight() - 50);
+			loadSessionData(primaryStage);
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("view/MainScreen.fxml"));
+			loader.setControllerFactory(SceneSelector.createControllerFactory(session));
+			final Parent root = (Parent) loader.load();
+			final Scene scene = new Scene(root, 1200, 800);
 			
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-			//scene.setUserAgentStylesheet(STYLESHEET_CASPIAN);
-			//System.setProperty( "javafx.userAgentStylesheetUrl", "CASPIAN" );
+			// Get current screen of the stage      
+			ObservableList<Screen> screens = Screen.getScreensForRectangle(new Rectangle2D(primaryStage.getX(), primaryStage.getY(), primaryStage.getWidth(), primaryStage.getHeight()));
+
+			// Change stage properties
+			Rectangle2D bounds = screens.get(0).getVisualBounds();
+			primaryStage.setX(bounds.getMinX());
+			primaryStage.setY(bounds.getMinY());
+			primaryStage.setWidth(bounds.getWidth());
+			primaryStage.setHeight(bounds.getHeight());
 			
-			primaryStage.setTitle("Switching Team Install Plan App");
+			primaryStage.setTitle("Switching Team Install Plan App - " + session.getUserName());
 			primaryStage.getIcons().add(new Image("file:resources/images/MainAppIcon.png"));
-			//primaryStage.setResizable(false);
 			primaryStage.setScene(scene);
-			primaryStage.setMinWidth(1000.0);
-	        primaryStage.setMinHeight(600.0);
-			//primaryStage.setMaximized(true);
 			primaryStage.show();
-		
-			//controller.setPrimaryStage(primaryStage);
 		} catch (Exception e) {
 			e.printStackTrace();
+			//TODO : Add a exception message prompt;
 		}
 	}
 
 	public static void main(String[] args) {
 		launch(args);
+	}
+
+	public void loadSessionData(Stage stage) {
+		session = new Session();
+		AppUtility.loadSystemConfig(session);
 	}
 }
