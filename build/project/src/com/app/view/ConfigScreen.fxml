@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefWidth="420.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox layoutX="5.0" layoutY="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+         <children>
+            <Accordion fx:id="accord">
+               <panes>
+                  <TitledPane fx:id="tp1" text="System Properties">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0">
+                           <children>
+                              <GridPane vgap="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints vgrow="NEVER" />
+                                    <RowConstraints vgrow="NEVER" />
+                                    <RowConstraints vgrow="NEVER" />
+                                    <RowConstraints maxHeight="369.0" vgrow="NEVER" />
+                                    <RowConstraints maxHeight="316.0" vgrow="NEVER" />
+                                    <RowConstraints maxHeight="293.0" vgrow="NEVER" />
+                                    <RowConstraints valignment="BOTTOM" vgrow="NEVER" />
+                                 </rowConstraints>
+                                 <children>
+                                    <Label text="Development System">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="Production System " GridPane.rowIndex="1">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="DR System         " GridPane.rowIndex="2">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="BASE24 Products" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="txtDevSys" GridPane.columnIndex="1" />
+                                    <TextField fx:id="txtProdSys" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <TextField fx:id="txtDRSys" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <VBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
+                                       <GridPane.margin>
+                                          <Insets left="20.0" />
+                                       </GridPane.margin>
+                                       <children>
+                                          <CheckBox fx:id="chkATM" mnemonicParsing="false" text="ATM" />
+                                          <CheckBox fx:id="chkPOS" mnemonicParsing="false" text="POS" />
+                                          <CheckBox fx:id="chkMyTell" mnemonicParsing="false" text="MY TELL" />
+                                       </children>
+                                    </VBox>
+                                    <Label text="Prod Object Security (RWEP)" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="txtProdSec" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    <TextField fx:id="txtProdUser" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Label text="Prod Object User" GridPane.rowIndex="5" />
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </TitledPane>
+                  <TitledPane fx:id="tp2" expanded="false" text="Application Properties">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0">
+                           <children>
+                              <GridPane hgap="5.0" layoutX="83.0" layoutY="31.0" vgap="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints fillHeight="false" valignment="CENTER" vgrow="NEVER" />
+                                    <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
+                                    <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                                 </rowConstraints>
+                                 <children>
+                                    <Label text="PrimeCode DB Location">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                                       <children>
+                                          <TextField fx:id="txtPCDBLoc" />
+                                          <Button fx:id="btnPCDBLoc" mnemonicParsing="false" text="..." />
+                                       </children>
+                                    </HBox>
+                                    <Label text="PDF Template Location" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <children>
+                                          <TextField fx:id="txtPDFTpltLoc" />
+                                          <Button fx:id="btnPDFTpltLoc" mnemonicParsing="false" text="..." />
+                                       </children>
+                                    </HBox>
+                                    <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </TitledPane>
+               </panes>
+            </Accordion>
+            <ButtonBar prefHeight="40.0" prefWidth="200.0">
+              <buttons>
+                <Button fx:id="btnSave" defaultButton="true" mnemonicParsing="false" onAction="#saveConfig" text="Save" />
+                  <Button cancelButton="true" mnemonicParsing="false" onAction="#discardConfig" text="Cancel" />
+              </buttons>
+            </ButtonBar>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
