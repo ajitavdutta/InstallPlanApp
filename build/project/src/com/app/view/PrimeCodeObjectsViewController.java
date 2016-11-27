@@ -1,19 +1,13 @@
 package com.app.view;
 
-import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-
 import com.app.models.ApplicationInfo;
-import com.app.models.PrimeCodeObjects;
 import com.app.models.Session;
 import com.app.models.TandemObject;
 import com.app.util.AppUtility;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Appinfo;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
