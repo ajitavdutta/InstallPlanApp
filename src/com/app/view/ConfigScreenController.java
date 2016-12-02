@@ -1,6 +1,7 @@
 package com.app.view;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.Arrays;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.app.models.Session;
 
@@ -97,6 +100,7 @@ public class ConfigScreenController implements Initializable {
 			Properties prop = new Properties();
 			InputStream input = new FileInputStream("config/app-config.properties");
 			prop.load(input);
+			input.close();
 
 			txtDevSys.setText(prop.getProperty("DEV-SYS"));
 			txtProdSys.setText(prop.getProperty("PROD-SYS"));
@@ -105,6 +109,7 @@ public class ConfigScreenController implements Initializable {
 			chkATM.setSelected(products.contains("ATM"));
 			chkPOS.setSelected(products.contains("POS"));
 			chkMyTell.setSelected(products.contains("MYTELL"));
+			
 			txtProdSec.setText(prop.getProperty("PROD-RWEP"));
 			txtProdUser.setText(prop.getProperty("PROD-OBJ-USER"));
 			txtPCDBLoc.setText(prop.getProperty("XML-PRIMECODE"));
@@ -120,6 +125,41 @@ public class ConfigScreenController implements Initializable {
 
 	public void setSession(Session session) {
 		this.session = session;
+	}
+	
+	private boolean saveSettings(){
+		try {
+			Properties prop = new Properties();
+			InputStream input = new FileInputStream("config/app-config.properties");
+			prop.load(input);
+			input.close();
+			
+			prop.setProperty("DEV-SYS", txtDevSys.getText().trim().toUpperCase());
+			prop.setProperty("PROD-SYS", txtProdSys.getText().trim().toUpperCase());
+			prop.setProperty("DR-SYS", txtDRSys.getText().trim().toUpperCase());
+						
+			ArrayList<String> prods = new ArrayList<>();
+			if (chkATM.isSelected()) prods.add("ATM");
+			if (chkPOS.isSelected()) prods.add("POS");
+			if (chkMyTell.isSelected()) prods.add("MYTELL");
+			
+			prop.setProperty("B24-PRODUCTS", StringUtils.join(prods,","));
+			prop.setProperty("PROD-RWEP", txtProdSec.getText().trim().toUpperCase());
+			prop.setProperty("PROD-OBJ-USER", txtProdUser.getText().trim().toUpperCase());
+			prop.setProperty("XML-PRIMECODE", txtPCDBLoc.getText().trim().toUpperCase());
+			prop.setProperty("TPLT-FILE", txtPDFTpltLoc.getText().trim().toUpperCase());
+						
+			FileOutputStream output = new FileOutputStream("config/app-config.properties");
+			prop.store(output, null);
+			output.close();
+			
+			return true;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
 	}
 
 	private boolean isValidData() {
@@ -196,6 +236,7 @@ public class ConfigScreenController implements Initializable {
 	@FXML
 	private void saveConfig(ActionEvent event) {
 		if (isValidData()) {
+			saveSettings();
 			stage.close();
 		}
 	}
